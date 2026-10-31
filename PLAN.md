@@ -115,7 +115,7 @@ Các test quan trọng đã được kiểm bằng **mutation** (cố ý phá lo
 - [x] ≥ 15 test, đều xanh (172)
 - [ ] **Repo GitHub**: code đã commit cục bộ nhưng **chưa push** (ahead `origin/main`)
 - [x] Ghi chú cách làm và quyết định ([docs/DESIGN-NOTES.md](docs/DESIGN-NOTES.md))
-- [ ] **Nhật ký hội thoại AI gốc, chưa chỉnh sửa**: mới xuất thử ra thư mục Downloads, **chưa nằm trong repo** (thiếu là tự động trượt)
+- [x] **Nhật ký hội thoại AI gốc, chưa chỉnh sửa**: đã có trong [docs/ai-conversation-log/](docs/ai-conversation-log/) (bản xuất 31/10 14:53 UTC, kèm [ghi chú giới hạn](docs/ai-conversation-log/EXPORT-NOTES.md)). **Phải xuất lại bản cuối** vì còn trao đổi sau thời điểm đó
 
 ---
 
@@ -157,7 +157,7 @@ Danh sách đầy đủ (D1–D20) với lý do và đánh đổi nằm ở [doc
 |---|---|
 | Hết giờ trước khi xong UI | Đã qua: UI xong, còn dư thời gian |
 | Hiểu sai ngữ nghĩa chu kỳ | Đã giảm: D2 được duyệt, test bằng đúng câu thông báo |
-| **Quên transcript** | **Còn mở:** phải xuất bản cuối vào `docs/ai-conversation-log/` rồi kiểm tra |
+| Quên transcript | Đã giảm: có bản xuất trong repo. **Còn mở:** xuất lại bản cuối (bản hiện tại dừng trước các trao đổi sau 14:53 UTC) |
 | **Quên push** | **Còn mở:** repo GitHub hiện chưa có bài làm |
 | Không giải thích được code | Mỗi quyết định có lý do ở DESIGN-NOTES; chủ dự án đọc lại trước khi nộp |
 | Lỗi chỉ thấy khi dùng giao diện thật | Đã xảy ra và đã sửa (key trùng, xung đột `PORT`, banner khuất, lý do cũ); xem DESIGN-NOTES |
@@ -182,7 +182,7 @@ Tất cả đã được thực hiện.
 
 ## 11. Quy trình nhật ký hội thoại AI (bắt buộc, thiếu là trượt)
 
-1. Dùng công cụ xuất transcript của ứng dụng, lưu **nguyên bản** vào `docs/ai-conversation-log/`. Không viết tay, tóm tắt, cắt hay chỉnh sửa. ❌ chưa có trong repo
+1. Dùng công cụ xuất transcript của ứng dụng, lưu **nguyên bản** vào `docs/ai-conversation-log/`. Không viết tay, tóm tắt, cắt hay chỉnh sửa. ✅ đã có (bản xuất 31/10 14:53 UTC, đã kiểm: đủ 21 tin nhắn của chủ dự án, mã băm khớp)
 2. Làm toàn bộ trong **cùng một phiên** (đã tuân thủ cho tới nay).
 3. Xuất thử sau khi duyệt plan để chủ dự án kiểm tra. ✅ đã xuất thử ra Downloads; chủ dự án cần mở xem đã đủ ngữ cảnh chưa.
 4. **Xuất bản cuối ngay trước khi nộp**, và xuất lại nếu còn trao đổi thêm. ❌
@@ -210,7 +210,7 @@ Tất cả đã được thực hiện.
 1. Chủ dự án review theo OPERATOR-CHECKLIST (đặc biệt mục G) và báo điểm cần sửa. **Đang chờ.**
 2. Sửa các điểm được nêu, kèm test.
 3. Chạy lại `npm test`, `npm run typecheck`, `npm run scenarios`.
-4. Xuất transcript bản cuối vào `docs/ai-conversation-log/` (nguyên bản), chủ dự án kiểm tra.
+4. Xuất lại transcript bản cuối, thay file trong `docs/ai-conversation-log/` (nguyên bản, cập nhật mã băm trong EXPORT-NOTES), chủ dự án kiểm tra.
 5. Commit, **push lên `origin/main`** (cần chủ dự án đồng ý).
 6. Clone repo từ GitHub vào thư mục sạch, chạy `npm install` và `npm test` để chắc người chấm cũng chạy được.
 7. Kiểm tra lại toàn bộ danh sách ở mục 6: tất cả phải được đánh dấu.
