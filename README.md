@@ -34,7 +34,7 @@ Biến môi trường tùy chọn: `API_PORT` (mặc định 3001), `DATA_DIR`, 
 | Ghi chú cách làm và quyết định | [docs/DESIGN-NOTES.md](docs/DESIGN-NOTES.md) |
 | Checklist trải nghiệm hệ thống | [docs/OPERATOR-CHECKLIST.md](docs/OPERATOR-CHECKLIST.md) |
 | Kế hoạch đã duyệt | [PLAN.md](PLAN.md) |
-| Nhật ký hội thoại AI gốc | `docs/ai-conversation-log/` (xuất nguyên bản bằng công cụ của ứng dụng, không chỉnh sửa) |
+| Nhật ký hội thoại AI gốc | [docs/ai-conversation-log/](docs/ai-conversation-log/): file zip nguyên bản, kèm bản Markdown để đọc ([gọn](docs/ai-conversation-log/CONVERSATION.md), [đầy đủ](docs/ai-conversation-log/CONVERSATION-FULL.md)) sinh tự động bằng `scripts/transcript-to-md.mjs` |
 
 ## Các kịch bản
 

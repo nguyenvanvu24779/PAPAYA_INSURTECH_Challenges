@@ -115,7 +115,7 @@ Các test quan trọng đã được kiểm bằng **mutation** (cố ý phá lo
 - [x] ≥ 15 test, đều xanh (172)
 - [ ] **Repo GitHub**: code đã commit cục bộ nhưng **chưa push** (ahead `origin/main`)
 - [x] Ghi chú cách làm và quyết định ([docs/DESIGN-NOTES.md](docs/DESIGN-NOTES.md))
-- [x] **Nhật ký hội thoại AI gốc, chưa chỉnh sửa**: đã có trong [docs/ai-conversation-log/](docs/ai-conversation-log/) (bản xuất 31/10 15:14 UTC, kèm [ghi chú giới hạn](docs/ai-conversation-log/EXPORT-NOTES.md)). Đây là bản cuối; giới hạn về phần kết của lượt làm việc cuối được nêu trong ghi chú
+- [x] **Nhật ký hội thoại AI gốc, chưa chỉnh sửa**: đã có trong [docs/ai-conversation-log/](docs/ai-conversation-log/) (bản xuất 31/10 15:17 UTC, kèm bản Markdown gọn và đầy đủ, và [ghi chú giới hạn](docs/ai-conversation-log/EXPORT-NOTES.md)). Đây là bản cuối; giới hạn về phần kết của lượt làm việc cuối được nêu trong ghi chú
 
 ---
 
@@ -182,10 +182,10 @@ Tất cả đã được thực hiện.
 
 ## 11. Quy trình nhật ký hội thoại AI (bắt buộc, thiếu là trượt)
 
-1. Dùng công cụ xuất transcript của ứng dụng, lưu **nguyên bản** vào `docs/ai-conversation-log/`. Không viết tay, tóm tắt, cắt hay chỉnh sửa. ✅ đã có (bản xuất 31/10 15:14 UTC, đã kiểm: đủ 26 tin nhắn của chủ dự án, mã băm khớp)
+1. Dùng công cụ xuất transcript của ứng dụng, lưu **nguyên bản** vào `docs/ai-conversation-log/`. Không viết tay, tóm tắt, cắt hay chỉnh sửa. ✅ đã có (bản xuất 31/10 15:17 UTC, mã băm khớp), kèm bản Markdown sinh tự động và đã đối chiếu nguyên văn
 2. Làm toàn bộ trong **cùng một phiên** (đã tuân thủ cho tới nay).
 3. Xuất thử sau khi duyệt plan để chủ dự án kiểm tra. ✅ đã xuất thử ra Downloads; chủ dự án cần mở xem đã đủ ngữ cảnh chưa.
-4. **Xuất bản cuối ngay trước khi nộp.** ✅ đã xuất 31/10 15:14 UTC; nếu còn trao đổi đáng kể sau đó thì xuất lại
+4. **Xuất bản cuối ngay trước khi nộp.** ✅ đã xuất 31/10 15:17 UTC; nếu còn trao đổi đáng kể sau đó thì xuất lại
 5. Giới hạn đã báo: nội dung bản xuất phụ thuộc công cụ của ứng dụng; kiểm tra lại sau khi xuất.
 
 ---

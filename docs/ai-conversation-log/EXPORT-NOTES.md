@@ -1,27 +1,54 @@
-# Ghi chú về bản xuất nhật ký hội thoại AI
+# Ghi chú về nhật ký hội thoại AI
 
-File nhật ký: `session-export-1793459644430.zip`. **Nguyên bản, không chỉnh sửa**: sao chép nguyên vẹn từ thư mục Downloads sau khi công cụ xuất của ứng dụng tạo ra. Ghi chú này là file riêng, do người làm bài viết thêm, không nằm trong file zip.
+Thư mục này có ba loại file:
+
+| File | Là gì | Dành cho |
+|---|---|---|
+| `session-export-1793459887408.zip` | **Bản gốc**, xuất bằng công cụ của ứng dụng Claude, sao chép nguyên vẹn, không chỉnh sửa. Đây là nguồn chuẩn | Lưu trữ, đối chiếu |
+| `CONVERSATION.md` | Bản Markdown gọn: tin nhắn của người dùng, câu trả lời của AI, danh sách công cụ đã gọi | Người đọc |
+| `CONVERSATION-FULL.md` | Bản Markdown đầy đủ: thêm tham số và kết quả của mọi lần gọi công cụ, phần suy luận được ghi lại, ngữ cảnh hệ thống | AI, hệ thống khác, người cần chi tiết |
+
+Ghi chú này do người làm bài viết thêm, không nằm trong file zip.
+
+## Bản gốc
 
 - Công cụ xuất: chức năng xuất transcript của ứng dụng Claude (Code tab), phiên "Git initialization".
-- Thời điểm xuất: 31/10/2026, khoảng 15:14 UTC (ghi nhận cuối cùng trong file: 15:14:03 UTC).
-- SHA-256 của file zip: `21e201e09233c55fec44e02ad4c820f76f0bb1f95ec9703a0d5858cb665900fb`
-- Kích thước: 4,376,649 byte.
+- Thời điểm xuất: 31/10/2026, ghi nhận cuối cùng trong file lúc 15:17:41 UTC.
+- SHA-256 của file zip: `e78490cb0b91bdf9738036b747983c20f9393661b1b2fea7bb4b4e71652dda3b`
+- SHA-256 của `transcript.jsonl` bên trong: `4d82a8d5c86fbc5c0c9497d502951c8eca86e366e1b4cdb644ed940edfa183b3` (cũng ghi ở đầu hai file Markdown).
+- `transcript.jsonl`: 2055 dòng JSON, đọc được hết; trùng từng byte với file phiên gốc của ứng dụng trong cùng zip.
 
-## Trong file zip có gì
+## Hai file Markdown được tạo thế nào
 
-- `transcript.jsonl` (cũng có bản trùng nội dung với tên là mã phiên): toàn bộ hội thoại dạng JSON Lines, 1967 dòng, đọc được hết.
-- Các ảnh chụp màn hình trình duyệt mà công cụ trả về trong lúc thử giao diện, và tên phiên.
+Sinh tự động bằng [scripts/transcript-to-md.mjs](../../scripts/transcript-to-md.mjs), không viết tay. Để tự tạo lại và đối chiếu:
 
-## Đã kiểm tra khi xuất
+```bash
+unzip -p docs/ai-conversation-log/session-export-1793459887408.zip transcript.jsonl > transcript.jsonl
+node scripts/transcript-to-md.mjs transcript.jsonl CONVERSATION.md compact "session-export-1793459887408.zip / transcript.jsonl"
+node scripts/transcript-to-md.mjs transcript.jsonl CONVERSATION-FULL.md full "session-export-1793459887408.zip / transcript.jsonl"
+```
 
-- Có đủ **26 tin nhắn của chủ dự án**, từ "khởi tạo git" đến yêu cầu "commit lại, xuất lại nhật ký … push lên để bàn giao", cùng tin nhắn gửi giữa chừng một lượt làm việc.
-- Có toàn bộ lời gọi công cụ của AI (332 lần) và 69 đoạn trả lời bằng văn bản.
-- Có cả các chỉ dẫn hệ thống của ứng dụng ở đầu hội thoại.
-- `transcript.jsonl` trùng khớp từng byte với file phiên gốc của ứng dụng.
+Kết quả phải giống từng byte với hai file trong thư mục này.
+
+Đã kiểm tra khi tạo: mọi nội dung sau đều xuất hiện **nguyên văn** trong file Markdown tương ứng.
+
+| Nội dung | Bản gọn | Bản đầy đủ |
+|---|---|---|
+| Tin nhắn người dùng, thông báo và lệnh cục bộ của ứng dụng (33) | 33/33 | 33/33 |
+| Tin nhắn gửi giữa lượt làm việc (1) | 1/1 | 1/1 |
+| Đoạn trả lời của AI (72) | 72/72 | 72/72 |
+| Tham số gọi công cụ (342) | chỉ tên và mô tả | 342/342 |
+| Đoạn văn bản trong kết quả công cụ (499) | không có | 499/499 |
+| Khối suy luận có nội dung (16) | không có | 16/16 |
+
+Mọi khối mã đều đóng đúng; chạy script hai lần cho cùng một kết quả.
 
 ## Giới hạn, cần nói rõ
 
-1. **Phần suy luận nội bộ của AI gần như không có**: file chứa 128 khối "thinking" nhưng chỉ 16 khối có nội dung, còn lại rỗng. Đây là cách công cụ xuất của ứng dụng ghi lại, không phải do người làm bài lược bỏ.
-2. **Bản xuất dừng trước phần kết của lượt làm việc cuối**: có yêu cầu bàn giao của chủ dự án và các bước kiểm tra, xuất file, nhưng không có lời AI trả lời cuối cùng, việc xác nhận của chủ dự án trước khi push và bản thân việc push. Công cụ xuất không thể chứa chính thao tác xuất nó đang thực hiện.
-3. File có chứa địa chỉ email của chủ dự án và đường dẫn thư mục trên máy (nằm trong chỉ dẫn hệ thống và nội dung hội thoại). Không được chỉnh sửa vì yêu cầu nhật ký nguyên bản.
-4. Một lượt trả lời của AI đã bị bộ lọc an toàn của ứng dụng dừng giữa chừng; thông báo này có trong nhật ký đúng như phát sinh, không bị gỡ bỏ.
+1. **Phần suy luận nội bộ của AI gần như không có**: bản xuất có 132 khối "thinking" nhưng chỉ 16 khối có nội dung, còn lại rỗng. Đây là cách công cụ xuất của ứng dụng ghi lại, không phải do người làm bài lược bỏ.
+2. **Lượt trả lời bị bộ lọc an toàn của ứng dụng dừng**: hai lần, không có nội dung nào của chúng được ghi trong bản xuất. Thông báo của ứng dụng về việc này có trong nhật ký. Hai bản ghi lỗi liên quan được thay bằng dòng ghi chú trong file Markdown; nguyên bản có trong zip.
+3. **Bản xuất dừng giữa lượt làm việc cuối**: không chứa việc tạo file Markdown, câu trả lời cuối, xác nhận của chủ dự án trước khi push, và việc push.
+4. Một tin nhắn của chủ dự án xuất hiện hai lần (gửi lại sau khi lượt trả lời bị dừng); cả hai đều được giữ nguyên.
+5. File có chứa địa chỉ email của chủ dự án, mã tổ chức (UUID) và đường dẫn thư mục trên máy. Không có token hay khóa bí mật (đã quét). Không được chỉnh sửa vì yêu cầu nhật ký nguyên bản.
+6. Phiên chuyển từ mô hình `claude-sonnet-5-5` sang `claude-opus-5-5` ở lượt cuối (lệnh `/model` có trong nhật ký).
+7. `CONVERSATION-FULL.md` khoảng 1,1 MB; GitHub có thể không hiển thị đẹp file lớn như vậy, khi đó hãy mở dạng raw.

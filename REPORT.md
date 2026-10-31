@@ -83,7 +83,7 @@ Danh sách đầy đủ 20 quyết định, kèm lý do và đánh đổi, ở [
 
 Toàn bộ bài làm được thực hiện cùng Claude Code trong một phiên làm việc: phân tích đề, thiết kế, viết code, test và tài liệu. Con người quyết định các điểm chính: stack, bỏ xác thực, duyệt các quyết định D1 và D2, xác nhận D18 và D19, và phát hiện 5 lỗ hổng nghiệp vụ ở mục 5.
 
-Nhật ký hội thoại gốc, không chỉnh sửa, xuất bằng công cụ của ứng dụng: [docs/ai-conversation-log/](docs/ai-conversation-log/).
+Nhật ký hội thoại gốc, không chỉnh sửa, xuất bằng công cụ của ứng dụng: [docs/ai-conversation-log/](docs/ai-conversation-log/). Để đọc dễ hơn có bản Markdown sinh tự động từ chính file gốc: [CONVERSATION.md](docs/ai-conversation-log/CONVERSATION.md) (gọn) và [CONVERSATION-FULL.md](docs/ai-conversation-log/CONVERSATION-FULL.md) (đầy đủ). Giới hạn của bản xuất ghi ở [EXPORT-NOTES.md](docs/ai-conversation-log/EXPORT-NOTES.md).
 
 ## 8. Bản đồ tài liệu
 

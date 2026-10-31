@@ -1,0 +1,3 @@
+# Keep the AI conversation log byte-for-byte identical to what the export and
+# the converter produced (no line-ending conversion), so hashes can be checked.
+docs/ai-conversation-log/** -text
