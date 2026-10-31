@@ -16,6 +16,20 @@ export function validateWorkflow(config: WorkflowConfig): string[] {
     problems.push(`initialState: unknown state ${config.initialState}`);
   }
 
+  for (const role of config.intake.roles) {
+    if (!roles.has(role)) problems.push(`intake: role ${role} is not declared in roles`);
+  }
+  for (const [field, rule] of Object.entries(config.dataAccess)) {
+    const at = `dataAccess ${field}`;
+    expectKind(field, null, at, problems);
+    for (const role of rule.roles) {
+      if (!roles.has(role)) problems.push(`${at}: role ${role} is not declared in roles`);
+    }
+    for (const state of rule.states) {
+      if (!states.has(state)) problems.push(`${at}: unknown state ${state}`);
+    }
+  }
+
   const seenIds = new Set<string>();
   const seenPairs = new Set<string>();
   const outgoing = new Map<string, string[]>();
@@ -48,6 +62,11 @@ export function validateWorkflow(config: WorkflowConfig): string[] {
     for (const c of t.preconditions) checkCondition(c, where, problems);
     for (const e of t.effects) {
       if (e.type === 'stampTime') expectKind(e.field, ['datetime'], `${where} effect stampTime`, problems);
+      if (e.type === 'notify') {
+        for (const [, name] of e.message.matchAll(/\{(\w+)\}/g)) {
+          expectKind(name!, null, `${where} effect notify placeholder`, problems);
+        }
+      }
       if (e.type === 'clearFields') {
         for (const f of e.fields) expectKind(f, null, `${where} effect clearFields`, problems);
       }

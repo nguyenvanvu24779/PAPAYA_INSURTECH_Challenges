@@ -1,0 +1,247 @@
+# Claim lifecycle state machine. The engine contains no state names: everything
+# below is the single source of truth. Rows map 1:1 to the table in CHALLENGE.md.
+#
+# Money fields (claimAmount, coverageLimit) are integers in minor units.
+# Required documents are an assumption (the brief only says "all required
+# documents"); change the list under verify_documents to change the rule.
+
+version: 1
+name: insurance-claim-lifecycle
+initialState: SUBMITTED
+
+roles:
+  - document_clerk
+  - team_lead
+  - assessor
+  - finance
+  - system
+
+states:
+  SUBMITTED:
+    description: Claim received, awaiting document verification
+  DOCUMENTS_VERIFIED:
+    description: All required documents confirmed complete and valid
+  UNDER_ASSESSMENT:
+    description: An assessor is reviewing the claim
+  PENDING_INFO:
+    description: Additional information requested from the member
+  APPROVED:
+    description: Claim accepted for payment
+  REJECTED:
+    description: Claim declined
+  PAYMENT_INITIATED:
+    description: Payment processing started
+  CLOSED:
+    description: Claim lifecycle complete
+    terminal: true
+  ESCALATED:
+    description: Team lead has taken over a claim that needs a decision beyond the assessor
+
+# Who may submit a claim.
+intake:
+  roles: [document_clerk]
+
+# Who may set each claim field by hand, and in which states. Fields not listed
+# (paymentRequestId, assessmentStartedAt) are system-managed: only effects write them.
+# The same rules apply to the optional `data` sent with a transition, so nobody
+# can satisfy a precondition by editing a field they do not own.
+dataAccess:
+  documents:
+    roles: [document_clerk]
+    states: [SUBMITTED, PENDING_INFO]
+  coverageLimit:
+    roles: [document_clerk]
+    states: [SUBMITTED]
+  claimAmount:
+    roles: [document_clerk, assessor]
+    states: [SUBMITTED, UNDER_ASSESSMENT]
+  assessorId:
+    roles: [team_lead]
+    states: [DOCUMENTS_VERIFIED]
+  assessmentReportComplete:
+    roles: [assessor]
+    states: [UNDER_ASSESSMENT]
+  rejectionReason:
+    roles: [assessor]
+    states: [UNDER_ASSESSMENT]
+  appealDeadline:
+    roles: [assessor]
+    states: [UNDER_ASSESSMENT]
+  missingInfoDescription:
+    roles: [assessor]
+    states: [UNDER_ASSESSMENT]
+  newInfoReceived:
+    roles: [document_clerk]
+    states: [PENDING_INFO]
+  paymentConfirmed:
+    roles: [finance]
+    states: [PAYMENT_INITIATED]
+  paymentReference:
+    roles: [finance]
+    states: [PAYMENT_INITIATED]
+  memberAcknowledged:
+    roles: [system]
+    states: [REJECTED]
+
+transitions:
+  - id: verify_documents
+    from: SUBMITTED
+    to: DOCUMENTS_VERIFIED
+    description: Document clerk confirms all required documents are present
+    roles: [document_clerk]
+    preconditions:
+      - type: includesAll
+        field: documents
+        values: [claim_form, identity_document, supporting_evidence]
+        message: All required documents must be present (claim_form, identity_document, supporting_evidence)
+    effects:
+      - type: notify
+        target: assessment_team
+        message: Claim documents verified, ready for assessment
+
+  - id: start_assessment
+    from: DOCUMENTS_VERIFIED
+    to: UNDER_ASSESSMENT
+    description: Team lead starts assessment once an assessor is assigned
+    roles: [team_lead]
+    preconditions:
+      - type: nonEmpty
+        field: assessorId
+        message: An assessor must be assigned before assessment can start
+    effects:
+      - type: stampTime
+        field: assessmentStartedAt
+
+  - id: approve
+    from: UNDER_ASSESSMENT
+    to: APPROVED
+    description: Assessor approves a fully assessed claim within the coverage limit
+    roles: [assessor]
+    preconditions:
+      - type: isTrue
+        field: assessmentReportComplete
+        message: The assessment report must be complete
+      - type: lte
+        field: claimAmount
+        otherField: coverageLimit
+        message: Claim amount must not exceed the coverage limit
+    effects:
+      - type: notify
+        target: member
+        message: Your claim has been approved
+      - type: createPaymentRequest
+
+  - id: reject
+    from: UNDER_ASSESSMENT
+    to: REJECTED
+    description: Assessor rejects a fully assessed claim with a reason
+    roles: [assessor]
+    preconditions:
+      - type: isTrue
+        field: assessmentReportComplete
+        message: The assessment report must be complete
+      - type: nonEmpty
+        field: rejectionReason
+        message: A rejection reason is required
+      - type: exists
+        field: appealDeadline
+        message: An appeal deadline must be set so the member can appeal
+    effects:
+      - type: notify
+        target: member
+        message: "Your claim was rejected. Reason: {rejectionReason}. You may appeal before the appeal deadline."
+
+  - id: request_info
+    from: UNDER_ASSESSMENT
+    to: PENDING_INFO
+    description: Assessor asks the member for more information (max 3 times per claim)
+    roles: [assessor]
+    preconditions:
+      - type: nonEmpty
+        field: missingInfoDescription
+        message: A description of the missing information is required
+    effects:
+      - type: notify
+        target: member
+        message: "Additional information requested: {missingInfoDescription}"
+    maxCount: 3
+    limitMessage: Maximum information requests exceeded — escalate to team lead
+
+  - id: resume_after_info
+    from: PENDING_INFO
+    to: DOCUMENTS_VERIFIED
+    description: Document clerk records that the requested information has arrived
+    roles: [document_clerk]
+    preconditions:
+      - type: isTrue
+        field: newInfoReceived
+        message: New documents or information must be received first
+    effects:
+      # Resets the assessment clock and clears per-cycle flags so a stale value
+      # from this cycle can never satisfy a precondition in the next one.
+      - type: clearFields
+        fields: [assessmentStartedAt, newInfoReceived, missingInfoDescription]
+
+  - id: initiate_payment
+    from: APPROVED
+    to: PAYMENT_INITIATED
+    description: Finance starts payment for an approved claim
+    roles: [finance]
+    preconditions:
+      - type: nonEmpty
+        field: paymentRequestId
+        message: A payment request must exist before payment can start
+    effects:
+      - type: triggerPayment
+
+  - id: close_paid
+    from: PAYMENT_INITIATED
+    to: CLOSED
+    description: Finance closes the claim once payment is confirmed
+    roles: [finance]
+    preconditions:
+      - type: isTrue
+        field: paymentConfirmed
+        message: Payment must be confirmed before the claim can close
+      - type: nonEmpty
+        field: paymentReference
+        message: A payment reference is required to close the claim
+    effects:
+      - type: notify
+        target: member
+        message: "Your claim is closed. Payment reference: {paymentReference}"
+
+  - id: close_rejected
+    from: REJECTED
+    to: CLOSED
+    description: System closes a rejected claim after the appeal period or member acknowledgement
+    roles: [system]
+    preconditions:
+      - type: any
+        message: The appeal period must have expired or the member must have acknowledged the rejection
+        conditions:
+          - type: isPast
+            field: appealDeadline
+          - type: isTrue
+            field: memberAcknowledged
+    effects:
+      - type: archiveClaim
+
+  - id: escalate
+    from: UNDER_ASSESSMENT
+    to: ESCALATED
+    description: Team lead takes over, e.g. after the information-request limit is reached
+    roles: [team_lead]
+    effects:
+      - type: notify
+        target: assessment_team
+        message: Claim escalated to team lead
+
+  - id: resume_after_escalation
+    from: ESCALATED
+    to: UNDER_ASSESSMENT
+    description: Team lead hands the claim back to assessment
+    roles: [team_lead]
+    effects:
+      - type: stampTime
+        field: assessmentStartedAt

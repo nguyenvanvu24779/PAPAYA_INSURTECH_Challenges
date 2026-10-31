@@ -35,6 +35,52 @@ states:
     description: Claim lifecycle complete
     terminal: true
 
+# Who may submit a claim.
+intake:
+  roles: [document_clerk]
+
+# Who may set each claim field by hand, and in which states. Fields not listed
+# (paymentRequestId, assessmentStartedAt) are system-managed: only effects write them.
+# The same rules apply to the optional `data` sent with a transition, so nobody
+# can satisfy a precondition by editing a field they do not own.
+dataAccess:
+  documents:
+    roles: [document_clerk]
+    states: [SUBMITTED, PENDING_INFO]
+  coverageLimit:
+    roles: [document_clerk]
+    states: [SUBMITTED]
+  claimAmount:
+    roles: [document_clerk, assessor]
+    states: [SUBMITTED, UNDER_ASSESSMENT]
+  assessorId:
+    roles: [team_lead]
+    states: [DOCUMENTS_VERIFIED]
+  assessmentReportComplete:
+    roles: [assessor]
+    states: [UNDER_ASSESSMENT]
+  rejectionReason:
+    roles: [assessor]
+    states: [UNDER_ASSESSMENT]
+  appealDeadline:
+    roles: [assessor]
+    states: [UNDER_ASSESSMENT]
+  missingInfoDescription:
+    roles: [assessor]
+    states: [UNDER_ASSESSMENT]
+  newInfoReceived:
+    roles: [document_clerk]
+    states: [PENDING_INFO]
+  paymentConfirmed:
+    roles: [finance]
+    states: [PAYMENT_INITIATED]
+  paymentReference:
+    roles: [finance]
+    states: [PAYMENT_INITIATED]
+  memberAcknowledged:
+    roles: [system]
+    states: [REJECTED]
+
 transitions:
   - id: verify_documents
     from: SUBMITTED
@@ -95,6 +141,9 @@ transitions:
       - type: nonEmpty
         field: rejectionReason
         message: A rejection reason is required
+      - type: exists
+        field: appealDeadline
+        message: An appeal deadline must be set so the member can appeal
     effects:
       - type: notify
         target: member

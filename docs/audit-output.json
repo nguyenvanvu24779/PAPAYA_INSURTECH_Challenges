@@ -1,0 +1,1402 @@
+{
+  "scenario_1": {
+    "name": "Happy path",
+    "claimId": "CLM-0001",
+    "entries": [
+      {
+        "id": "AUD-000001",
+        "seq": 1,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "CREATE",
+        "claimId": "CLM-0001",
+        "fromState": null,
+        "toState": "SUBMITTED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Claim submitted",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "claimAmount",
+            "before": null,
+            "after": 500000
+          },
+          {
+            "field": "coverageLimit",
+            "before": null,
+            "after": 1000000
+          }
+        ],
+        "effects": [],
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d"
+      },
+      {
+        "id": "AUD-000002",
+        "seq": 2,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "SUBMITTED",
+        "toState": "DOCUMENTS_VERIFIED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "All required documents present",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "documents",
+            "before": null,
+            "after": [
+              "claim_form",
+              "identity_document",
+              "supporting_evidence"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment"
+          }
+        ],
+        "prevHash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d",
+        "hash": "6443bfcb34e0ef57db7aa047cee8241a681bcfe5ba8dc34d703da0a0491d817a"
+      },
+      {
+        "id": "AUD-000003",
+        "seq": 3,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "DOCUMENTS_VERIFIED",
+        "toState": "UNDER_ASSESSMENT",
+        "triggeredBy": {
+          "userId": "lead-01",
+          "role": "team_lead"
+        },
+        "reason": "Assigned to assessor-01",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": null,
+            "after": "2026-11-01T09:00:00.000Z"
+          },
+          {
+            "field": "assessorId",
+            "before": null,
+            "after": "assessor-01"
+          }
+        ],
+        "effects": [
+          {
+            "type": "stampTime",
+            "status": "OK",
+            "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "prevHash": "6443bfcb34e0ef57db7aa047cee8241a681bcfe5ba8dc34d703da0a0491d817a",
+        "hash": "cc7a0becf7c024d7ee7953c478b602328a662d55c54bdf1f157224d3302bbea6"
+      },
+      {
+        "id": "AUD-000004",
+        "seq": 4,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "UNDER_ASSESSMENT",
+        "toState": "APPROVED",
+        "triggeredBy": {
+          "userId": "assessor-01",
+          "role": "assessor"
+        },
+        "reason": "Report complete, within coverage limit",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentReportComplete",
+            "before": null,
+            "after": true
+          },
+          {
+            "field": "paymentRequestId",
+            "before": null,
+            "after": "PAY-REQ-CLM-0001"
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:member] claim CLM-0001: Your claim has been approved"
+          },
+          {
+            "type": "createPaymentRequest",
+            "status": "OK",
+            "detail": "[payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for amount 500000"
+          }
+        ],
+        "prevHash": "cc7a0becf7c024d7ee7953c478b602328a662d55c54bdf1f157224d3302bbea6",
+        "hash": "1a4d4c3b97eacd9f6d6fdf6fbbb5d0c9a8e56d6ce77bef70bbb802fb2f854503"
+      },
+      {
+        "id": "AUD-000005",
+        "seq": 5,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "APPROVED",
+        "toState": "PAYMENT_INITIATED",
+        "triggeredBy": {
+          "userId": "finance-01",
+          "role": "finance"
+        },
+        "reason": "Payment request approved for processing",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [],
+        "effects": [
+          {
+            "type": "triggerPayment",
+            "status": "OK",
+            "detail": "[payments] claim CLM-0001: payment system triggered for request PAY-REQ-CLM-0001"
+          }
+        ],
+        "prevHash": "1a4d4c3b97eacd9f6d6fdf6fbbb5d0c9a8e56d6ce77bef70bbb802fb2f854503",
+        "hash": "7baf62c53df0efe65d40a429f2bc432475a219d50d2e7bca98e06631ca70fc6f"
+      },
+      {
+        "id": "AUD-000006",
+        "seq": 6,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "PAYMENT_INITIATED",
+        "toState": "CLOSED",
+        "triggeredBy": {
+          "userId": "finance-01",
+          "role": "finance"
+        },
+        "reason": "Payment confirmed by bank",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "paymentConfirmed",
+            "before": null,
+            "after": true
+          },
+          {
+            "field": "paymentReference",
+            "before": null,
+            "after": "BANK-TXN-778899"
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:member] claim CLM-0001: Your claim is closed. Payment reference: BANK-TXN-778899"
+          }
+        ],
+        "prevHash": "7baf62c53df0efe65d40a429f2bc432475a219d50d2e7bca98e06631ca70fc6f",
+        "hash": "d5225e7c6763ef802f9cd204107071b0aa27a3b7c46eb5b0c7fba0663ad25686"
+      }
+    ]
+  },
+  "scenario_2": {
+    "name": "Rejection path",
+    "claimId": "CLM-0001",
+    "entries": [
+      {
+        "id": "AUD-000001",
+        "seq": 1,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "CREATE",
+        "claimId": "CLM-0001",
+        "fromState": null,
+        "toState": "SUBMITTED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Claim submitted",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "claimAmount",
+            "before": null,
+            "after": 500000
+          },
+          {
+            "field": "coverageLimit",
+            "before": null,
+            "after": 1000000
+          }
+        ],
+        "effects": [],
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d"
+      },
+      {
+        "id": "AUD-000002",
+        "seq": 2,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "SUBMITTED",
+        "toState": "DOCUMENTS_VERIFIED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "All required documents present",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "documents",
+            "before": null,
+            "after": [
+              "claim_form",
+              "identity_document",
+              "supporting_evidence"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment"
+          }
+        ],
+        "prevHash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d",
+        "hash": "6443bfcb34e0ef57db7aa047cee8241a681bcfe5ba8dc34d703da0a0491d817a"
+      },
+      {
+        "id": "AUD-000003",
+        "seq": 3,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "DOCUMENTS_VERIFIED",
+        "toState": "UNDER_ASSESSMENT",
+        "triggeredBy": {
+          "userId": "lead-01",
+          "role": "team_lead"
+        },
+        "reason": "Assigned to assessor-01",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": null,
+            "after": "2026-11-01T09:00:00.000Z"
+          },
+          {
+            "field": "assessorId",
+            "before": null,
+            "after": "assessor-01"
+          }
+        ],
+        "effects": [
+          {
+            "type": "stampTime",
+            "status": "OK",
+            "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "prevHash": "6443bfcb34e0ef57db7aa047cee8241a681bcfe5ba8dc34d703da0a0491d817a",
+        "hash": "cc7a0becf7c024d7ee7953c478b602328a662d55c54bdf1f157224d3302bbea6"
+      },
+      {
+        "id": "AUD-000004",
+        "seq": 4,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "UNDER_ASSESSMENT",
+        "toState": "REJECTED",
+        "triggeredBy": {
+          "userId": "assessor-01",
+          "role": "assessor"
+        },
+        "reason": "Policy exclusion applies",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "appealDeadline",
+            "before": null,
+            "after": "2026-12-01T09:00:00.000Z"
+          },
+          {
+            "field": "assessmentReportComplete",
+            "before": null,
+            "after": true
+          },
+          {
+            "field": "rejectionReason",
+            "before": null,
+            "after": "Policy exclusion applies"
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:member] claim CLM-0001: Your claim was rejected. Reason: Policy exclusion applies. You may appeal before the appeal deadline."
+          }
+        ],
+        "prevHash": "cc7a0becf7c024d7ee7953c478b602328a662d55c54bdf1f157224d3302bbea6",
+        "hash": "fa5a2cef1fd2f806402528f8ac356579d9a956844cb9ff911d9a7157b9996997"
+      },
+      {
+        "id": "AUD-000005",
+        "seq": 5,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "REJECTED",
+        "toState": "CLOSED",
+        "triggeredBy": {
+          "userId": "system",
+          "role": "system"
+        },
+        "reason": "Appeal period expired",
+        "outcome": "DENIED",
+        "errorCode": "PRECONDITION_FAILED",
+        "errorMessage": "Preconditions not met for REJECTED -> CLOSED: The appeal period must have expired or the member must have acknowledged the rejection",
+        "dataChanges": [],
+        "effects": [],
+        "prevHash": "fa5a2cef1fd2f806402528f8ac356579d9a956844cb9ff911d9a7157b9996997",
+        "hash": "5d7140de01ee133081960ee3af17a6c15c3ad3ed7fe6b3e796aee1994998ae83"
+      },
+      {
+        "id": "AUD-000006",
+        "seq": 6,
+        "timestamp": "2026-12-02T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "REJECTED",
+        "toState": "CLOSED",
+        "triggeredBy": {
+          "userId": "system",
+          "role": "system"
+        },
+        "reason": "Appeal period expired",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [],
+        "effects": [
+          {
+            "type": "archiveClaim",
+            "status": "OK",
+            "detail": "[archive] claim CLM-0001: claim archived"
+          }
+        ],
+        "prevHash": "5d7140de01ee133081960ee3af17a6c15c3ad3ed7fe6b3e796aee1994998ae83",
+        "hash": "12b873aba2a2133bc03d3003089b504323b8b3b6cf1b5ed2a2919a13f23a8a76"
+      }
+    ]
+  },
+  "scenario_3": {
+    "name": "Information request loop",
+    "claimId": "CLM-0001",
+    "entries": [
+      {
+        "id": "AUD-000001",
+        "seq": 1,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "CREATE",
+        "claimId": "CLM-0001",
+        "fromState": null,
+        "toState": "SUBMITTED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Claim submitted",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "claimAmount",
+            "before": null,
+            "after": 500000
+          },
+          {
+            "field": "coverageLimit",
+            "before": null,
+            "after": 1000000
+          }
+        ],
+        "effects": [],
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d"
+      },
+      {
+        "id": "AUD-000002",
+        "seq": 2,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "SUBMITTED",
+        "toState": "DOCUMENTS_VERIFIED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "All required documents present",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "documents",
+            "before": null,
+            "after": [
+              "claim_form",
+              "identity_document",
+              "supporting_evidence"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment"
+          }
+        ],
+        "prevHash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d",
+        "hash": "6443bfcb34e0ef57db7aa047cee8241a681bcfe5ba8dc34d703da0a0491d817a"
+      },
+      {
+        "id": "AUD-000003",
+        "seq": 3,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "DOCUMENTS_VERIFIED",
+        "toState": "UNDER_ASSESSMENT",
+        "triggeredBy": {
+          "userId": "lead-01",
+          "role": "team_lead"
+        },
+        "reason": "Assigned to assessor-01",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": null,
+            "after": "2026-11-01T09:00:00.000Z"
+          },
+          {
+            "field": "assessorId",
+            "before": null,
+            "after": "assessor-01"
+          }
+        ],
+        "effects": [
+          {
+            "type": "stampTime",
+            "status": "OK",
+            "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "prevHash": "6443bfcb34e0ef57db7aa047cee8241a681bcfe5ba8dc34d703da0a0491d817a",
+        "hash": "cc7a0becf7c024d7ee7953c478b602328a662d55c54bdf1f157224d3302bbea6"
+      },
+      {
+        "id": "AUD-000004",
+        "seq": 4,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "UNDER_ASSESSMENT",
+        "toState": "PENDING_INFO",
+        "triggeredBy": {
+          "userId": "assessor-01",
+          "role": "assessor"
+        },
+        "reason": "Information request #1",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "missingInfoDescription",
+            "before": null,
+            "after": "Hospital invoice, request #1"
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #1"
+          }
+        ],
+        "prevHash": "cc7a0becf7c024d7ee7953c478b602328a662d55c54bdf1f157224d3302bbea6",
+        "hash": "e8238b962e60252c856fb5dc0cda9aa6e813257f31391073acfde86645679a32"
+      },
+      {
+        "id": "AUD-000005",
+        "seq": 5,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "PENDING_INFO",
+        "toState": "DOCUMENTS_VERIFIED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Member sent the requested documents",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": "2026-11-01T09:00:00.000Z",
+            "after": null
+          },
+          {
+            "field": "documents",
+            "before": [
+              "claim_form",
+              "identity_document",
+              "supporting_evidence"
+            ],
+            "after": [
+              "claim_form",
+              "identity_document",
+              "supporting_evidence",
+              "hospital_invoice"
+            ]
+          },
+          {
+            "field": "missingInfoDescription",
+            "before": "Hospital invoice, request #1",
+            "after": null
+          }
+        ],
+        "effects": [
+          {
+            "type": "clearFields",
+            "status": "OK",
+            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription"
+          }
+        ],
+        "prevHash": "e8238b962e60252c856fb5dc0cda9aa6e813257f31391073acfde86645679a32",
+        "hash": "326ecb650a33d09e6d6025f000680c3f3afc359b7d1e4d18f7d0e39dff31e961"
+      },
+      {
+        "id": "AUD-000006",
+        "seq": 6,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "DOCUMENTS_VERIFIED",
+        "toState": "UNDER_ASSESSMENT",
+        "triggeredBy": {
+          "userId": "lead-01",
+          "role": "team_lead"
+        },
+        "reason": "Assigned to assessor-01",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": null,
+            "after": "2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "effects": [
+          {
+            "type": "stampTime",
+            "status": "OK",
+            "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "prevHash": "326ecb650a33d09e6d6025f000680c3f3afc359b7d1e4d18f7d0e39dff31e961",
+        "hash": "2af97f44e8b792b2b9e8ee6bc839d12df32464f192e4d260d0ac96d5a38e3750"
+      },
+      {
+        "id": "AUD-000007",
+        "seq": 7,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "UNDER_ASSESSMENT",
+        "toState": "APPROVED",
+        "triggeredBy": {
+          "userId": "assessor-01",
+          "role": "assessor"
+        },
+        "reason": "Report complete, within coverage limit",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentReportComplete",
+            "before": null,
+            "after": true
+          },
+          {
+            "field": "paymentRequestId",
+            "before": null,
+            "after": "PAY-REQ-CLM-0001"
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:member] claim CLM-0001: Your claim has been approved"
+          },
+          {
+            "type": "createPaymentRequest",
+            "status": "OK",
+            "detail": "[payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for amount 500000"
+          }
+        ],
+        "prevHash": "2af97f44e8b792b2b9e8ee6bc839d12df32464f192e4d260d0ac96d5a38e3750",
+        "hash": "2be01131c7d2519d0d9c5385f190ee3e6607df041b86950b65e1d715ba8faf98"
+      },
+      {
+        "id": "AUD-000008",
+        "seq": 8,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "APPROVED",
+        "toState": "PAYMENT_INITIATED",
+        "triggeredBy": {
+          "userId": "finance-01",
+          "role": "finance"
+        },
+        "reason": "Payment request approved for processing",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [],
+        "effects": [
+          {
+            "type": "triggerPayment",
+            "status": "OK",
+            "detail": "[payments] claim CLM-0001: payment system triggered for request PAY-REQ-CLM-0001"
+          }
+        ],
+        "prevHash": "2be01131c7d2519d0d9c5385f190ee3e6607df041b86950b65e1d715ba8faf98",
+        "hash": "f86b1a3cb9b469b06e73554d2c28d520042e10c3e5eacb5594402229ed128f5e"
+      },
+      {
+        "id": "AUD-000009",
+        "seq": 9,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "PAYMENT_INITIATED",
+        "toState": "CLOSED",
+        "triggeredBy": {
+          "userId": "finance-01",
+          "role": "finance"
+        },
+        "reason": "Payment confirmed by bank",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "paymentConfirmed",
+            "before": null,
+            "after": true
+          },
+          {
+            "field": "paymentReference",
+            "before": null,
+            "after": "BANK-TXN-778899"
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:member] claim CLM-0001: Your claim is closed. Payment reference: BANK-TXN-778899"
+          }
+        ],
+        "prevHash": "f86b1a3cb9b469b06e73554d2c28d520042e10c3e5eacb5594402229ed128f5e",
+        "hash": "fa579c87476eb5e3ad53ea67ae871fc9f9f698933bf12639a85d4f300e1f0fb0"
+      }
+    ]
+  },
+  "scenario_4": {
+    "name": "Invalid transition",
+    "claimId": "CLM-0001",
+    "entries": [
+      {
+        "id": "AUD-000001",
+        "seq": 1,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "CREATE",
+        "claimId": "CLM-0001",
+        "fromState": null,
+        "toState": "SUBMITTED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Claim submitted",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "claimAmount",
+            "before": null,
+            "after": 500000
+          },
+          {
+            "field": "coverageLimit",
+            "before": null,
+            "after": 1000000
+          }
+        ],
+        "effects": [],
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d"
+      },
+      {
+        "id": "AUD-000002",
+        "seq": 2,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "SUBMITTED",
+        "toState": "APPROVED",
+        "triggeredBy": {
+          "userId": "assessor-01",
+          "role": "assessor"
+        },
+        "reason": "Trying to skip verification",
+        "outcome": "DENIED",
+        "errorCode": "TRANSITION_NOT_DEFINED",
+        "errorMessage": "Cannot move claim from SUBMITTED to APPROVED: no such transition. Allowed from SUBMITTED: DOCUMENTS_VERIFIED",
+        "dataChanges": [],
+        "effects": [],
+        "prevHash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d",
+        "hash": "175a592a8d067e4ba97de20da992a3812e8d8bb8b76f073b667f920796897b0c"
+      }
+    ]
+  },
+  "scenario_5": {
+    "name": "Wrong role",
+    "claimId": "CLM-0001",
+    "entries": [
+      {
+        "id": "AUD-000001",
+        "seq": 1,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "CREATE",
+        "claimId": "CLM-0001",
+        "fromState": null,
+        "toState": "SUBMITTED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Claim submitted",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "claimAmount",
+            "before": null,
+            "after": 500000
+          },
+          {
+            "field": "coverageLimit",
+            "before": null,
+            "after": 1000000
+          }
+        ],
+        "effects": [],
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d"
+      },
+      {
+        "id": "AUD-000002",
+        "seq": 2,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "SUBMITTED",
+        "toState": "DOCUMENTS_VERIFIED",
+        "triggeredBy": {
+          "userId": "finance-01",
+          "role": "finance"
+        },
+        "reason": "All required documents present",
+        "outcome": "DENIED",
+        "errorCode": "ROLE_NOT_ALLOWED",
+        "errorMessage": "Role 'finance' cannot move a claim from SUBMITTED to DOCUMENTS_VERIFIED; requires one of: document_clerk",
+        "dataChanges": [],
+        "effects": [],
+        "prevHash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d",
+        "hash": "038fcfe66436b6898e41daa61b86d6fe2169d957d2d57c3287c87401794a922b"
+      },
+      {
+        "id": "AUD-000003",
+        "seq": 3,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "SUBMITTED",
+        "toState": "DOCUMENTS_VERIFIED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "All required documents present",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "documents",
+            "before": null,
+            "after": [
+              "claim_form",
+              "identity_document",
+              "supporting_evidence"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment"
+          }
+        ],
+        "prevHash": "038fcfe66436b6898e41daa61b86d6fe2169d957d2d57c3287c87401794a922b",
+        "hash": "dd1d8fca96aa5849abae6449d2ab49980bdf3103973c505df41deb082c6d652a"
+      },
+      {
+        "id": "AUD-000004",
+        "seq": 4,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "DOCUMENTS_VERIFIED",
+        "toState": "UNDER_ASSESSMENT",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Assigned to assessor-01",
+        "outcome": "DENIED",
+        "errorCode": "ROLE_NOT_ALLOWED",
+        "errorMessage": "Role 'document_clerk' cannot move a claim from DOCUMENTS_VERIFIED to UNDER_ASSESSMENT; requires one of: team_lead",
+        "dataChanges": [],
+        "effects": [],
+        "prevHash": "dd1d8fca96aa5849abae6449d2ab49980bdf3103973c505df41deb082c6d652a",
+        "hash": "50f811d966a458e2d2d97c987c2ba3d4229bea5d66f8b7f54fc612ec61697df1"
+      }
+    ]
+  },
+  "scenario_6 (extra)": {
+    "name": "Cycle guard",
+    "claimId": "CLM-0001",
+    "entries": [
+      {
+        "id": "AUD-000001",
+        "seq": 1,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "CREATE",
+        "claimId": "CLM-0001",
+        "fromState": null,
+        "toState": "SUBMITTED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Claim submitted",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "claimAmount",
+            "before": null,
+            "after": 500000
+          },
+          {
+            "field": "coverageLimit",
+            "before": null,
+            "after": 1000000
+          }
+        ],
+        "effects": [],
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d"
+      },
+      {
+        "id": "AUD-000002",
+        "seq": 2,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "SUBMITTED",
+        "toState": "DOCUMENTS_VERIFIED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "All required documents present",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "documents",
+            "before": null,
+            "after": [
+              "claim_form",
+              "identity_document",
+              "supporting_evidence"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment"
+          }
+        ],
+        "prevHash": "09dfa526fe5da2bca9c4d1890992781cedc2555e856544c750b4cd9fd4dd6d1d",
+        "hash": "6443bfcb34e0ef57db7aa047cee8241a681bcfe5ba8dc34d703da0a0491d817a"
+      },
+      {
+        "id": "AUD-000003",
+        "seq": 3,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "DOCUMENTS_VERIFIED",
+        "toState": "UNDER_ASSESSMENT",
+        "triggeredBy": {
+          "userId": "lead-01",
+          "role": "team_lead"
+        },
+        "reason": "Assigned to assessor-01",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": null,
+            "after": "2026-11-01T09:00:00.000Z"
+          },
+          {
+            "field": "assessorId",
+            "before": null,
+            "after": "assessor-01"
+          }
+        ],
+        "effects": [
+          {
+            "type": "stampTime",
+            "status": "OK",
+            "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "prevHash": "6443bfcb34e0ef57db7aa047cee8241a681bcfe5ba8dc34d703da0a0491d817a",
+        "hash": "cc7a0becf7c024d7ee7953c478b602328a662d55c54bdf1f157224d3302bbea6"
+      },
+      {
+        "id": "AUD-000004",
+        "seq": 4,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "UNDER_ASSESSMENT",
+        "toState": "PENDING_INFO",
+        "triggeredBy": {
+          "userId": "assessor-01",
+          "role": "assessor"
+        },
+        "reason": "Information request #1",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "missingInfoDescription",
+            "before": null,
+            "after": "Hospital invoice, request #1"
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #1"
+          }
+        ],
+        "prevHash": "cc7a0becf7c024d7ee7953c478b602328a662d55c54bdf1f157224d3302bbea6",
+        "hash": "e8238b962e60252c856fb5dc0cda9aa6e813257f31391073acfde86645679a32"
+      },
+      {
+        "id": "AUD-000005",
+        "seq": 5,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "PENDING_INFO",
+        "toState": "DOCUMENTS_VERIFIED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Member sent the requested documents",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": "2026-11-01T09:00:00.000Z",
+            "after": null
+          },
+          {
+            "field": "documents",
+            "before": [
+              "claim_form",
+              "identity_document",
+              "supporting_evidence"
+            ],
+            "after": [
+              "claim_form",
+              "identity_document",
+              "supporting_evidence",
+              "hospital_invoice"
+            ]
+          },
+          {
+            "field": "missingInfoDescription",
+            "before": "Hospital invoice, request #1",
+            "after": null
+          }
+        ],
+        "effects": [
+          {
+            "type": "clearFields",
+            "status": "OK",
+            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription"
+          }
+        ],
+        "prevHash": "e8238b962e60252c856fb5dc0cda9aa6e813257f31391073acfde86645679a32",
+        "hash": "326ecb650a33d09e6d6025f000680c3f3afc359b7d1e4d18f7d0e39dff31e961"
+      },
+      {
+        "id": "AUD-000006",
+        "seq": 6,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "DOCUMENTS_VERIFIED",
+        "toState": "UNDER_ASSESSMENT",
+        "triggeredBy": {
+          "userId": "lead-01",
+          "role": "team_lead"
+        },
+        "reason": "Assigned to assessor-01",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": null,
+            "after": "2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "effects": [
+          {
+            "type": "stampTime",
+            "status": "OK",
+            "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "prevHash": "326ecb650a33d09e6d6025f000680c3f3afc359b7d1e4d18f7d0e39dff31e961",
+        "hash": "2af97f44e8b792b2b9e8ee6bc839d12df32464f192e4d260d0ac96d5a38e3750"
+      },
+      {
+        "id": "AUD-000007",
+        "seq": 7,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "UNDER_ASSESSMENT",
+        "toState": "PENDING_INFO",
+        "triggeredBy": {
+          "userId": "assessor-01",
+          "role": "assessor"
+        },
+        "reason": "Information request #2",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "missingInfoDescription",
+            "before": null,
+            "after": "Hospital invoice, request #2"
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #2"
+          }
+        ],
+        "prevHash": "2af97f44e8b792b2b9e8ee6bc839d12df32464f192e4d260d0ac96d5a38e3750",
+        "hash": "8bda4958b88735e70c3d2bdf3d005a502f20e2e2ce3d1bb3f06f330d065b6eb6"
+      },
+      {
+        "id": "AUD-000008",
+        "seq": 8,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "PENDING_INFO",
+        "toState": "DOCUMENTS_VERIFIED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Member sent the requested documents",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": "2026-11-01T09:00:00.000Z",
+            "after": null
+          },
+          {
+            "field": "missingInfoDescription",
+            "before": "Hospital invoice, request #2",
+            "after": null
+          }
+        ],
+        "effects": [
+          {
+            "type": "clearFields",
+            "status": "OK",
+            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription"
+          }
+        ],
+        "prevHash": "8bda4958b88735e70c3d2bdf3d005a502f20e2e2ce3d1bb3f06f330d065b6eb6",
+        "hash": "8b044245e938d837a0e6b4d1c95cb9d7c3dd71cdec65a192e87507fa9ce1580b"
+      },
+      {
+        "id": "AUD-000009",
+        "seq": 9,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "DOCUMENTS_VERIFIED",
+        "toState": "UNDER_ASSESSMENT",
+        "triggeredBy": {
+          "userId": "lead-01",
+          "role": "team_lead"
+        },
+        "reason": "Assigned to assessor-01",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": null,
+            "after": "2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "effects": [
+          {
+            "type": "stampTime",
+            "status": "OK",
+            "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "prevHash": "8b044245e938d837a0e6b4d1c95cb9d7c3dd71cdec65a192e87507fa9ce1580b",
+        "hash": "4cfdaeb029cd36132539a9245e07ddbdf1dc03a536264bcfdef9b75d0ba8efd9"
+      },
+      {
+        "id": "AUD-000010",
+        "seq": 10,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "UNDER_ASSESSMENT",
+        "toState": "PENDING_INFO",
+        "triggeredBy": {
+          "userId": "assessor-01",
+          "role": "assessor"
+        },
+        "reason": "Information request #3",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "missingInfoDescription",
+            "before": null,
+            "after": "Hospital invoice, request #3"
+          }
+        ],
+        "effects": [
+          {
+            "type": "notify",
+            "status": "OK",
+            "detail": "[notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #3"
+          }
+        ],
+        "prevHash": "4cfdaeb029cd36132539a9245e07ddbdf1dc03a536264bcfdef9b75d0ba8efd9",
+        "hash": "c088a489a9c7d2bc44fb77e9a05687e5d159eaa46b85a32b74b44eb4268f21bc"
+      },
+      {
+        "id": "AUD-000011",
+        "seq": 11,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "PENDING_INFO",
+        "toState": "DOCUMENTS_VERIFIED",
+        "triggeredBy": {
+          "userId": "clerk-01",
+          "role": "document_clerk"
+        },
+        "reason": "Member sent the requested documents",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": "2026-11-01T09:00:00.000Z",
+            "after": null
+          },
+          {
+            "field": "missingInfoDescription",
+            "before": "Hospital invoice, request #3",
+            "after": null
+          }
+        ],
+        "effects": [
+          {
+            "type": "clearFields",
+            "status": "OK",
+            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription"
+          }
+        ],
+        "prevHash": "c088a489a9c7d2bc44fb77e9a05687e5d159eaa46b85a32b74b44eb4268f21bc",
+        "hash": "243e1e9b657befd1edbcda0237d9c433dac9c838f5a9b6197895b8843aab4372"
+      },
+      {
+        "id": "AUD-000012",
+        "seq": 12,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "DOCUMENTS_VERIFIED",
+        "toState": "UNDER_ASSESSMENT",
+        "triggeredBy": {
+          "userId": "lead-01",
+          "role": "team_lead"
+        },
+        "reason": "Assigned to assessor-01",
+        "outcome": "APPLIED",
+        "errorCode": null,
+        "errorMessage": null,
+        "dataChanges": [
+          {
+            "field": "assessmentStartedAt",
+            "before": null,
+            "after": "2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "effects": [
+          {
+            "type": "stampTime",
+            "status": "OK",
+            "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
+          }
+        ],
+        "prevHash": "243e1e9b657befd1edbcda0237d9c433dac9c838f5a9b6197895b8843aab4372",
+        "hash": "8b11823e982f37cddce375b9ff87efdf156c951c945d689b90f5e5ca2023c8be"
+      },
+      {
+        "id": "AUD-000013",
+        "seq": 13,
+        "timestamp": "2026-11-01T09:00:00.000Z",
+        "kind": "TRANSITION",
+        "claimId": "CLM-0001",
+        "fromState": "UNDER_ASSESSMENT",
+        "toState": "PENDING_INFO",
+        "triggeredBy": {
+          "userId": "assessor-01",
+          "role": "assessor"
+        },
+        "reason": "Information request #4",
+        "outcome": "DENIED",
+        "errorCode": "MAX_COUNT_EXCEEDED",
+        "errorMessage": "Maximum information requests exceeded — escalate to team lead",
+        "dataChanges": [],
+        "effects": [],
+        "prevHash": "8b11823e982f37cddce375b9ff87efdf156c951c945d689b90f5e5ca2023c8be",
+        "hash": "9223d719ebe8b0078a128eaa841557c902a7c9bea73e3bc626a13c4527a01cdd"
+      }
+    ]
+  }
+}

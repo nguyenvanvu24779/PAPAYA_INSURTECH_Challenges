@@ -1,0 +1,284 @@
+====================================================================================================
+Scenario 1: Happy path  [PASS]
+SUBMITTED → DOCUMENTS_VERIFIED → UNDER_ASSESSMENT → APPROVED → PAYMENT_INITIATED → CLOSED
+Claim: CLM-0001   Final state: CLOSED (expected CLOSED)
+----------------------------------------------------------------------------------------------------
+Steps
+   1. [ok  ] Clerk submits claim (amount 5,000.00, limit 10,000.00) -> APPLIED
+   2. [ok  ] Clerk verifies documents -> APPLIED
+   3. [ok  ] Team lead assigns assessor and starts assessment -> APPLIED
+   4. [ok  ] Assessor approves -> APPLIED
+   5. [ok  ] Finance initiates payment -> APPLIED
+   6. [ok  ] Finance closes after payment confirmation -> APPLIED
+
+Audit trail (immutable, hash-chained)
+  #1 2026-11-01T09:00:00.000Z APPLIED CREATE      (new) -> SUBMITTED
+      by clerk-01 (document_clerk) — "Claim submitted"
+      data claimAmount: null -> 500000
+      data coverageLimit: null -> 1000000
+  #2 2026-11-01T09:00:00.000Z APPLIED TRANSITION  SUBMITTED -> DOCUMENTS_VERIFIED
+      by clerk-01 (document_clerk) — "All required documents present"
+      data documents: null -> ["claim_form","identity_document","supporting_evidence"]
+  #3 2026-11-01T09:00:00.000Z APPLIED TRANSITION  DOCUMENTS_VERIFIED -> UNDER_ASSESSMENT
+      by lead-01 (team_lead) — "Assigned to assessor-01"
+      data assessmentStartedAt: null -> "2026-11-01T09:00:00.000Z"
+      data assessorId: null -> "assessor-01"
+  #4 2026-11-01T09:00:00.000Z APPLIED TRANSITION  UNDER_ASSESSMENT -> APPROVED
+      by assessor-01 (assessor) — "Report complete, within coverage limit"
+      data assessmentReportComplete: null -> true
+      data paymentRequestId: null -> "PAY-REQ-CLM-0001"
+  #5 2026-11-01T09:00:00.000Z APPLIED TRANSITION  APPROVED -> PAYMENT_INITIATED
+      by finance-01 (finance) — "Payment request approved for processing"
+  #6 2026-11-01T09:00:00.000Z APPLIED TRANSITION  PAYMENT_INITIATED -> CLOSED
+      by finance-01 (finance) — "Payment confirmed by bank"
+      data paymentConfirmed: null -> true
+      data paymentReference: null -> "BANK-TXN-778899"
+
+Side effects (mock, console)
+  [notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment
+  [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
+  [notify:member] claim CLM-0001: Your claim has been approved
+  [payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for amount 500000
+  [payments] claim CLM-0001: payment system triggered for request PAY-REQ-CLM-0001
+  [notify:member] claim CLM-0001: Your claim is closed. Payment reference: BANK-TXN-778899
+
+====================================================================================================
+Scenario 2: Rejection path  [PASS]
+SUBMITTED → DOCUMENTS_VERIFIED → UNDER_ASSESSMENT → REJECTED → CLOSED. Also proves a failed precondition: the system cannot close before the appeal period ends.
+Claim: CLM-0001   Final state: CLOSED (expected CLOSED)
+----------------------------------------------------------------------------------------------------
+Steps
+   1. [ok  ] Clerk submits claim (amount 5,000.00, limit 10,000.00) -> APPLIED
+   2. [ok  ] Clerk verifies documents -> APPLIED
+   3. [ok  ] Team lead assigns assessor and starts assessment -> APPLIED
+   4. [ok  ] Assessor rejects -> APPLIED
+   5. [ok  ] System tries to close during the appeal period (must fail) -> PRECONDITION_FAILED
+        Preconditions not met for REJECTED -> CLOSED: The appeal period must have expired or the member must have acknowledged the rejection
+   6. [time] Time passes: 31 days
+   7. [ok  ] System closes: appeal period expired -> APPLIED
+
+Audit trail (immutable, hash-chained)
+  #1 2026-11-01T09:00:00.000Z APPLIED CREATE      (new) -> SUBMITTED
+      by clerk-01 (document_clerk) — "Claim submitted"
+      data claimAmount: null -> 500000
+      data coverageLimit: null -> 1000000
+  #2 2026-11-01T09:00:00.000Z APPLIED TRANSITION  SUBMITTED -> DOCUMENTS_VERIFIED
+      by clerk-01 (document_clerk) — "All required documents present"
+      data documents: null -> ["claim_form","identity_document","supporting_evidence"]
+  #3 2026-11-01T09:00:00.000Z APPLIED TRANSITION  DOCUMENTS_VERIFIED -> UNDER_ASSESSMENT
+      by lead-01 (team_lead) — "Assigned to assessor-01"
+      data assessmentStartedAt: null -> "2026-11-01T09:00:00.000Z"
+      data assessorId: null -> "assessor-01"
+  #4 2026-11-01T09:00:00.000Z APPLIED TRANSITION  UNDER_ASSESSMENT -> REJECTED
+      by assessor-01 (assessor) — "Policy exclusion applies"
+      data appealDeadline: null -> "2026-12-01T09:00:00.000Z"
+      data assessmentReportComplete: null -> true
+      data rejectionReason: null -> "Policy exclusion applies"
+  #5 2026-11-01T09:00:00.000Z DENIED  TRANSITION  REJECTED -> CLOSED
+      by system (system) — "Appeal period expired"
+      DENIED PRECONDITION_FAILED: Preconditions not met for REJECTED -> CLOSED: The appeal period must have expired or the member must have acknowledged the rejection
+  #6 2026-12-02T09:00:00.000Z APPLIED TRANSITION  REJECTED -> CLOSED
+      by system (system) — "Appeal period expired"
+
+Side effects (mock, console)
+  [notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment
+  [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
+  [notify:member] claim CLM-0001: Your claim was rejected. Reason: Policy exclusion applies. You may appeal before the appeal deadline.
+  [archive] claim CLM-0001: claim archived
+
+====================================================================================================
+Scenario 3: Information request loop  [PASS]
+SUBMITTED → DOCUMENTS_VERIFIED → UNDER_ASSESSMENT → PENDING_INFO → DOCUMENTS_VERIFIED → UNDER_ASSESSMENT → APPROVED → PAYMENT_INITIATED → CLOSED
+Claim: CLM-0001   Final state: CLOSED (expected CLOSED)
+----------------------------------------------------------------------------------------------------
+Steps
+   1. [ok  ] Clerk submits claim (amount 5,000.00, limit 10,000.00) -> APPLIED
+   2. [ok  ] Clerk verifies documents -> APPLIED
+   3. [ok  ] Team lead assigns assessor and starts assessment -> APPLIED
+   4. [ok  ] Assessor requests information (#1) -> APPLIED
+   5. [ok  ] Clerk records received information -> APPLIED
+   6. [ok  ] Team lead assigns assessor and starts assessment -> APPLIED
+   7. [ok  ] Assessor approves -> APPLIED
+   8. [ok  ] Finance initiates payment -> APPLIED
+   9. [ok  ] Finance closes after payment confirmation -> APPLIED
+
+Audit trail (immutable, hash-chained)
+  #1 2026-11-01T09:00:00.000Z APPLIED CREATE      (new) -> SUBMITTED
+      by clerk-01 (document_clerk) — "Claim submitted"
+      data claimAmount: null -> 500000
+      data coverageLimit: null -> 1000000
+  #2 2026-11-01T09:00:00.000Z APPLIED TRANSITION  SUBMITTED -> DOCUMENTS_VERIFIED
+      by clerk-01 (document_clerk) — "All required documents present"
+      data documents: null -> ["claim_form","identity_document","supporting_evidence"]
+  #3 2026-11-01T09:00:00.000Z APPLIED TRANSITION  DOCUMENTS_VERIFIED -> UNDER_ASSESSMENT
+      by lead-01 (team_lead) — "Assigned to assessor-01"
+      data assessmentStartedAt: null -> "2026-11-01T09:00:00.000Z"
+      data assessorId: null -> "assessor-01"
+  #4 2026-11-01T09:00:00.000Z APPLIED TRANSITION  UNDER_ASSESSMENT -> PENDING_INFO
+      by assessor-01 (assessor) — "Information request #1"
+      data missingInfoDescription: null -> "Hospital invoice, request #1"
+  #5 2026-11-01T09:00:00.000Z APPLIED TRANSITION  PENDING_INFO -> DOCUMENTS_VERIFIED
+      by clerk-01 (document_clerk) — "Member sent the requested documents"
+      data assessmentStartedAt: "2026-11-01T09:00:00.000Z" -> null
+      data documents: ["claim_form","identity_document","supporting_evidence"] -> ["claim_form","identity_document","supporting_evidence","hospital_invoice"]
+      data missingInfoDescription: "Hospital invoice, request #1" -> null
+  #6 2026-11-01T09:00:00.000Z APPLIED TRANSITION  DOCUMENTS_VERIFIED -> UNDER_ASSESSMENT
+      by lead-01 (team_lead) — "Assigned to assessor-01"
+      data assessmentStartedAt: null -> "2026-11-01T09:00:00.000Z"
+  #7 2026-11-01T09:00:00.000Z APPLIED TRANSITION  UNDER_ASSESSMENT -> APPROVED
+      by assessor-01 (assessor) — "Report complete, within coverage limit"
+      data assessmentReportComplete: null -> true
+      data paymentRequestId: null -> "PAY-REQ-CLM-0001"
+  #8 2026-11-01T09:00:00.000Z APPLIED TRANSITION  APPROVED -> PAYMENT_INITIATED
+      by finance-01 (finance) — "Payment request approved for processing"
+  #9 2026-11-01T09:00:00.000Z APPLIED TRANSITION  PAYMENT_INITIATED -> CLOSED
+      by finance-01 (finance) — "Payment confirmed by bank"
+      data paymentConfirmed: null -> true
+      data paymentReference: null -> "BANK-TXN-778899"
+
+Side effects (mock, console)
+  [notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment
+  [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
+  [notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #1
+  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription
+  [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
+  [notify:member] claim CLM-0001: Your claim has been approved
+  [payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for amount 500000
+  [payments] claim CLM-0001: payment system triggered for request PAY-REQ-CLM-0001
+  [notify:member] claim CLM-0001: Your claim is closed. Payment reference: BANK-TXN-778899
+
+====================================================================================================
+Scenario 4: Invalid transition  [PASS]
+SUBMITTED → APPROVED is not defined and must fail with a specific error.
+Claim: CLM-0001   Final state: SUBMITTED (expected SUBMITTED)
+----------------------------------------------------------------------------------------------------
+Steps
+   1. [ok  ] Clerk submits claim (amount 5,000.00, limit 10,000.00) -> APPLIED
+   2. [ok  ] Assessor tries SUBMITTED → APPROVED (must fail) -> TRANSITION_NOT_DEFINED
+        Cannot move claim from SUBMITTED to APPROVED: no such transition. Allowed from SUBMITTED: DOCUMENTS_VERIFIED
+
+Audit trail (immutable, hash-chained)
+  #1 2026-11-01T09:00:00.000Z APPLIED CREATE      (new) -> SUBMITTED
+      by clerk-01 (document_clerk) — "Claim submitted"
+      data claimAmount: null -> 500000
+      data coverageLimit: null -> 1000000
+  #2 2026-11-01T09:00:00.000Z DENIED  TRANSITION  SUBMITTED -> APPROVED
+      by assessor-01 (assessor) — "Trying to skip verification"
+      DENIED TRANSITION_NOT_DEFINED: Cannot move claim from SUBMITTED to APPROVED: no such transition. Allowed from SUBMITTED: DOCUMENTS_VERIFIED
+
+Side effects (mock, console)
+
+====================================================================================================
+Scenario 5: Wrong role  [PASS]
+A role that is not allowed attempts a valid transition and must be refused.
+Claim: CLM-0001   Final state: DOCUMENTS_VERIFIED (expected DOCUMENTS_VERIFIED)
+----------------------------------------------------------------------------------------------------
+Steps
+   1. [ok  ] Clerk submits claim (amount 5,000.00, limit 10,000.00) -> APPLIED
+   2. [ok  ] Finance tries to verify documents (must fail) -> ROLE_NOT_ALLOWED
+        Role 'finance' cannot move a claim from SUBMITTED to DOCUMENTS_VERIFIED; requires one of: document_clerk
+   3. [ok  ] Clerk verifies documents -> APPLIED
+   4. [ok  ] Clerk tries to start assessment (must fail) -> ROLE_NOT_ALLOWED
+        Role 'document_clerk' cannot move a claim from DOCUMENTS_VERIFIED to UNDER_ASSESSMENT; requires one of: team_lead
+
+Audit trail (immutable, hash-chained)
+  #1 2026-11-01T09:00:00.000Z APPLIED CREATE      (new) -> SUBMITTED
+      by clerk-01 (document_clerk) — "Claim submitted"
+      data claimAmount: null -> 500000
+      data coverageLimit: null -> 1000000
+  #2 2026-11-01T09:00:00.000Z DENIED  TRANSITION  SUBMITTED -> DOCUMENTS_VERIFIED
+      by finance-01 (finance) — "All required documents present"
+      DENIED ROLE_NOT_ALLOWED: Role 'finance' cannot move a claim from SUBMITTED to DOCUMENTS_VERIFIED; requires one of: document_clerk
+  #3 2026-11-01T09:00:00.000Z APPLIED TRANSITION  SUBMITTED -> DOCUMENTS_VERIFIED
+      by clerk-01 (document_clerk) — "All required documents present"
+      data documents: null -> ["claim_form","identity_document","supporting_evidence"]
+  #4 2026-11-01T09:00:00.000Z DENIED  TRANSITION  DOCUMENTS_VERIFIED -> UNDER_ASSESSMENT
+      by clerk-01 (document_clerk) — "Assigned to assessor-01"
+      DENIED ROLE_NOT_ALLOWED: Role 'document_clerk' cannot move a claim from DOCUMENTS_VERIFIED to UNDER_ASSESSMENT; requires one of: team_lead
+
+Side effects (mock, console)
+  [notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment
+
+====================================================================================================
+Scenario 6 (extra): Cycle guard  [PASS]
+Three information-request cycles are allowed; the 4th request is refused with the mandated message.
+Claim: CLM-0001   Final state: UNDER_ASSESSMENT (expected UNDER_ASSESSMENT)
+----------------------------------------------------------------------------------------------------
+Steps
+   1. [ok  ] Clerk submits claim (amount 5,000.00, limit 10,000.00) -> APPLIED
+   2. [ok  ] Clerk verifies documents -> APPLIED
+   3. [ok  ] Team lead assigns assessor and starts assessment -> APPLIED
+   4. [ok  ] Assessor requests information (#1) -> APPLIED
+   5. [ok  ] Clerk records received information -> APPLIED
+   6. [ok  ] Team lead assigns assessor and starts assessment -> APPLIED
+   7. [ok  ] Assessor requests information (#2) -> APPLIED
+   8. [ok  ] Clerk records received information -> APPLIED
+   9. [ok  ] Team lead assigns assessor and starts assessment -> APPLIED
+  10. [ok  ] Assessor requests information (#3) -> APPLIED
+  11. [ok  ] Clerk records received information -> APPLIED
+  12. [ok  ] Team lead assigns assessor and starts assessment -> APPLIED
+  13. [ok  ] Assessor requests information a 4th time (must fail) -> MAX_COUNT_EXCEEDED
+        Maximum information requests exceeded — escalate to team lead
+
+Audit trail (immutable, hash-chained)
+  #1 2026-11-01T09:00:00.000Z APPLIED CREATE      (new) -> SUBMITTED
+      by clerk-01 (document_clerk) — "Claim submitted"
+      data claimAmount: null -> 500000
+      data coverageLimit: null -> 1000000
+  #2 2026-11-01T09:00:00.000Z APPLIED TRANSITION  SUBMITTED -> DOCUMENTS_VERIFIED
+      by clerk-01 (document_clerk) — "All required documents present"
+      data documents: null -> ["claim_form","identity_document","supporting_evidence"]
+  #3 2026-11-01T09:00:00.000Z APPLIED TRANSITION  DOCUMENTS_VERIFIED -> UNDER_ASSESSMENT
+      by lead-01 (team_lead) — "Assigned to assessor-01"
+      data assessmentStartedAt: null -> "2026-11-01T09:00:00.000Z"
+      data assessorId: null -> "assessor-01"
+  #4 2026-11-01T09:00:00.000Z APPLIED TRANSITION  UNDER_ASSESSMENT -> PENDING_INFO
+      by assessor-01 (assessor) — "Information request #1"
+      data missingInfoDescription: null -> "Hospital invoice, request #1"
+  #5 2026-11-01T09:00:00.000Z APPLIED TRANSITION  PENDING_INFO -> DOCUMENTS_VERIFIED
+      by clerk-01 (document_clerk) — "Member sent the requested documents"
+      data assessmentStartedAt: "2026-11-01T09:00:00.000Z" -> null
+      data documents: ["claim_form","identity_document","supporting_evidence"] -> ["claim_form","identity_document","supporting_evidence","hospital_invoice"]
+      data missingInfoDescription: "Hospital invoice, request #1" -> null
+  #6 2026-11-01T09:00:00.000Z APPLIED TRANSITION  DOCUMENTS_VERIFIED -> UNDER_ASSESSMENT
+      by lead-01 (team_lead) — "Assigned to assessor-01"
+      data assessmentStartedAt: null -> "2026-11-01T09:00:00.000Z"
+  #7 2026-11-01T09:00:00.000Z APPLIED TRANSITION  UNDER_ASSESSMENT -> PENDING_INFO
+      by assessor-01 (assessor) — "Information request #2"
+      data missingInfoDescription: null -> "Hospital invoice, request #2"
+  #8 2026-11-01T09:00:00.000Z APPLIED TRANSITION  PENDING_INFO -> DOCUMENTS_VERIFIED
+      by clerk-01 (document_clerk) — "Member sent the requested documents"
+      data assessmentStartedAt: "2026-11-01T09:00:00.000Z" -> null
+      data missingInfoDescription: "Hospital invoice, request #2" -> null
+  #9 2026-11-01T09:00:00.000Z APPLIED TRANSITION  DOCUMENTS_VERIFIED -> UNDER_ASSESSMENT
+      by lead-01 (team_lead) — "Assigned to assessor-01"
+      data assessmentStartedAt: null -> "2026-11-01T09:00:00.000Z"
+  #10 2026-11-01T09:00:00.000Z APPLIED TRANSITION  UNDER_ASSESSMENT -> PENDING_INFO
+      by assessor-01 (assessor) — "Information request #3"
+      data missingInfoDescription: null -> "Hospital invoice, request #3"
+  #11 2026-11-01T09:00:00.000Z APPLIED TRANSITION  PENDING_INFO -> DOCUMENTS_VERIFIED
+      by clerk-01 (document_clerk) — "Member sent the requested documents"
+      data assessmentStartedAt: "2026-11-01T09:00:00.000Z" -> null
+      data missingInfoDescription: "Hospital invoice, request #3" -> null
+  #12 2026-11-01T09:00:00.000Z APPLIED TRANSITION  DOCUMENTS_VERIFIED -> UNDER_ASSESSMENT
+      by lead-01 (team_lead) — "Assigned to assessor-01"
+      data assessmentStartedAt: null -> "2026-11-01T09:00:00.000Z"
+  #13 2026-11-01T09:00:00.000Z DENIED  TRANSITION  UNDER_ASSESSMENT -> PENDING_INFO
+      by assessor-01 (assessor) — "Information request #4"
+      DENIED MAX_COUNT_EXCEEDED: Maximum information requests exceeded — escalate to team lead
+
+Side effects (mock, console)
+  [notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment
+  [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
+  [notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #1
+  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription
+  [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
+  [notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #2
+  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription
+  [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
+  [notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #3
+  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription
+  [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
+
+====================================================================================================
+ALL SCENARIOS PASSED

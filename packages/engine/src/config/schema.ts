@@ -106,6 +106,19 @@ export const workflowSchema = z
       stateId,
       z.object({ description: text, terminal: z.boolean().default(false) }).strict(),
     ),
+    /** Roles allowed to submit (create) a claim. */
+    intake: z.object({ roles: z.array(roleId).min(1) }).strict(),
+    /**
+     * Who may set each claim field by hand, and in which states. A field with
+     * no rule here is system-managed (written only by effects). This stops a
+     * user from satisfying a precondition by editing data they do not own.
+     */
+    dataAccess: z.record(
+      fieldName,
+      z
+        .object({ roles: z.array(roleId).min(1), states: z.array(stateId).min(1) })
+        .strict(),
+    ),
     transitions: z.array(transitionSchema).min(1),
   })
   .strict();

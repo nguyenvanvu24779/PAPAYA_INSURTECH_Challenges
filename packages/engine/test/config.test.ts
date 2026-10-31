@@ -142,3 +142,27 @@ describe('config validation', () => {
     expect(() => parseWorkflowYaml('version: [unclosed')).toThrow(ConfigError);
   });
 });
+
+describe('config validation: access rules and messages', () => {
+  it('rejects an intake role that is not declared', () => {
+    const raw = rawConfig();
+    raw.intake.roles = ['intern'];
+    expect(problemsOf(raw).join('\n')).toContain('intake: role intern is not declared');
+  });
+
+  it('rejects a dataAccess rule for an unknown field, role or state', () => {
+    const raw = rawConfig();
+    raw.dataAccess.favouriteColour = { roles: ['assessor'], states: ['SUBMITTED'] };
+    raw.dataAccess.claimAmount = { roles: ['intern'], states: ['NOWHERE'] };
+    const text = problemsOf(raw).join('\n');
+    expect(text).toContain('unknown claim field favouriteColour');
+    expect(text).toContain('role intern is not declared');
+    expect(text).toContain('unknown state NOWHERE');
+  });
+
+  it('rejects a notify placeholder that is not a claim field', () => {
+    const raw = rawConfig();
+    raw.transitions[0].effects[0].message = 'Hello {nobody}';
+    expect(problemsOf(raw).join('\n')).toContain('unknown claim field nobody');
+  });
+});
