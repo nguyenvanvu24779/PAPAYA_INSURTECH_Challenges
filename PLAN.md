@@ -1,6 +1,6 @@
 # PLAN — Claim Workflow Orchestrator
 
-> Trạng thái (cập nhật tối 31/10/2026): **đã duyệt và đã thực hiện xong P0–P5; P6 còn push và xuất transcript bản cuối.** Đang chờ chủ dự án review cuối.
+> Trạng thái (cập nhật tối 31/10/2026): **đã duyệt và đã thực hiện xong P0–P5; P6 chỉ còn push.** Đã xuất nhật ký bản cuối; đang chờ chủ dự án xem rồi push.
 > Hạn nộp: **12:00, 01/11/2026**. Mục tiêu nộp sớm: **trước 11:00, 01/11** (chừa 1 giờ dự phòng).
 > Tài liệu liên quan: [README.md](README.md) · [docs/DESIGN-NOTES.md](docs/DESIGN-NOTES.md) (quyết định D1–D20) · [docs/OPERATOR-CHECKLIST.md](docs/OPERATOR-CHECKLIST.md)
 
@@ -115,7 +115,7 @@ Các test quan trọng đã được kiểm bằng **mutation** (cố ý phá lo
 - [x] ≥ 15 test, đều xanh (172)
 - [ ] **Repo GitHub**: code đã commit cục bộ nhưng **chưa push** (ahead `origin/main`)
 - [x] Ghi chú cách làm và quyết định ([docs/DESIGN-NOTES.md](docs/DESIGN-NOTES.md))
-- [x] **Nhật ký hội thoại AI gốc, chưa chỉnh sửa**: đã có trong [docs/ai-conversation-log/](docs/ai-conversation-log/) (bản xuất 31/10 14:53 UTC, kèm [ghi chú giới hạn](docs/ai-conversation-log/EXPORT-NOTES.md)). **Phải xuất lại bản cuối** vì còn trao đổi sau thời điểm đó
+- [x] **Nhật ký hội thoại AI gốc, chưa chỉnh sửa**: đã có trong [docs/ai-conversation-log/](docs/ai-conversation-log/) (bản xuất 31/10 15:14 UTC, kèm [ghi chú giới hạn](docs/ai-conversation-log/EXPORT-NOTES.md)). Đây là bản cuối; giới hạn về phần kết của lượt làm việc cuối được nêu trong ghi chú
 
 ---
 
@@ -129,7 +129,7 @@ Các test quan trọng đã được kiểm bằng **mutation** (cố ý phá lo
 | P3 | 0:45 | Test + runner kịch bản | ✅ |
 | P4 | 0:30 | API Express | ✅ |
 | P5 | 1:00 | Web UI | ✅ (không làm nút chạy nhanh kịch bản trên UI, đã dự kiến là có thể cắt) |
-| P6 | 0:30 | README, ghi chú, diff mở rộng, transcript, push | ⚠️ tài liệu xong; còn transcript bản cuối và push |
+| P6 | 0:30 | README, ghi chú, diff mở rộng, transcript, push | ⚠️ tài liệu và nhật ký xong; còn push (chờ chủ dự án xem nhật ký) |
 | Review | — | Chủ dự án review, 5 sửa đổi nghiệp vụ (D17–D20, D11) | ✅ sửa xong; đang review tiếp |
 
 Mỗi giai đoạn có commit riêng (xem `git log`).
@@ -157,7 +157,7 @@ Danh sách đầy đủ (D1–D20) với lý do và đánh đổi nằm ở [doc
 |---|---|
 | Hết giờ trước khi xong UI | Đã qua: UI xong, còn dư thời gian |
 | Hiểu sai ngữ nghĩa chu kỳ | Đã giảm: D2 được duyệt, test bằng đúng câu thông báo |
-| Quên transcript | Đã giảm: có bản xuất trong repo. **Còn mở:** xuất lại bản cuối (bản hiện tại dừng trước các trao đổi sau 14:53 UTC) |
+| Quên transcript | Đã xử lý: bản cuối nằm trong repo. Giới hạn còn lại (không chứa phần kết của lượt làm việc cuối) đã nêu trong EXPORT-NOTES |
 | **Quên push** | **Còn mở:** repo GitHub hiện chưa có bài làm |
 | Không giải thích được code | Mỗi quyết định có lý do ở DESIGN-NOTES; chủ dự án đọc lại trước khi nộp |
 | Lỗi chỉ thấy khi dùng giao diện thật | Đã xảy ra và đã sửa (key trùng, xung đột `PORT`, banner khuất, lý do cũ); xem DESIGN-NOTES |
@@ -182,10 +182,10 @@ Tất cả đã được thực hiện.
 
 ## 11. Quy trình nhật ký hội thoại AI (bắt buộc, thiếu là trượt)
 
-1. Dùng công cụ xuất transcript của ứng dụng, lưu **nguyên bản** vào `docs/ai-conversation-log/`. Không viết tay, tóm tắt, cắt hay chỉnh sửa. ✅ đã có (bản xuất 31/10 14:53 UTC, đã kiểm: đủ 21 tin nhắn của chủ dự án, mã băm khớp)
+1. Dùng công cụ xuất transcript của ứng dụng, lưu **nguyên bản** vào `docs/ai-conversation-log/`. Không viết tay, tóm tắt, cắt hay chỉnh sửa. ✅ đã có (bản xuất 31/10 15:14 UTC, đã kiểm: đủ 26 tin nhắn của chủ dự án, mã băm khớp)
 2. Làm toàn bộ trong **cùng một phiên** (đã tuân thủ cho tới nay).
 3. Xuất thử sau khi duyệt plan để chủ dự án kiểm tra. ✅ đã xuất thử ra Downloads; chủ dự án cần mở xem đã đủ ngữ cảnh chưa.
-4. **Xuất bản cuối ngay trước khi nộp**, và xuất lại nếu còn trao đổi thêm. ❌
+4. **Xuất bản cuối ngay trước khi nộp.** ✅ đã xuất 31/10 15:14 UTC; nếu còn trao đổi đáng kể sau đó thì xuất lại
 5. Giới hạn đã báo: nội dung bản xuất phụ thuộc công cụ của ứng dụng; kiểm tra lại sau khi xuất.
 
 ---
@@ -207,10 +207,10 @@ Tất cả đã được thực hiện.
 
 ## 13. Việc còn lại để nộp
 
-1. Chủ dự án review theo OPERATOR-CHECKLIST (đặc biệt mục G) và báo điểm cần sửa. **Đang chờ.**
-2. Sửa các điểm được nêu, kèm test.
-3. Chạy lại `npm test`, `npm run typecheck`, `npm run scenarios`.
-4. Xuất lại transcript bản cuối, thay file trong `docs/ai-conversation-log/` (nguyên bản, cập nhật mã băm trong EXPORT-NOTES), chủ dự án kiểm tra.
+1. ✅ Chủ dự án đã review theo OPERATOR-CHECKLIST (25/27 mục; C5 và E3 chưa kiểm).
+2. ✅ Không còn điểm nào cần sửa.
+3. ✅ Đã chạy lại: 172 test pass, typecheck sạch, 6 kịch bản PASS, build thành công, 0 lỗ hổng.
+4. ✅ Đã xuất lại transcript bản cuối, thay file trong `docs/ai-conversation-log/` (nguyên bản, mã băm trong EXPORT-NOTES). **Chủ dự án đang xem.**
 5. Commit, **push lên `origin/main`** (cần chủ dự án đồng ý).
 6. Clone repo từ GitHub vào thư mục sạch, chạy `npm install` và `npm test` để chắc người chấm cũng chạy được.
 7. Kiểm tra lại toàn bộ danh sách ở mục 6: tất cả phải được đánh dấu.
