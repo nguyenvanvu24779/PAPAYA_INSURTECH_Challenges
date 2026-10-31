@@ -16,6 +16,7 @@ export type Condition =
   | { type: 'nonEmpty'; field: string; message?: string }
   | { type: 'isTrue'; field: string; message?: string }
   | { type: 'isPast'; field: string; message?: string }
+  | { type: 'isFuture'; field: string; message?: string }
   | { type: 'includesAll'; field: string; values: string[]; message?: string }
   | { type: 'lte'; field: string; otherField: string; message?: string }
   | { type: 'any'; conditions: Condition[]; message?: string }
@@ -27,6 +28,7 @@ export const conditionSchema: z.ZodType<Condition> = z.lazy(() =>
     z.object({ type: z.literal('nonEmpty'), field: fieldName, message: text.optional() }).strict(),
     z.object({ type: z.literal('isTrue'), field: fieldName, message: text.optional() }).strict(),
     z.object({ type: z.literal('isPast'), field: fieldName, message: text.optional() }).strict(),
+    z.object({ type: z.literal('isFuture'), field: fieldName, message: text.optional() }).strict(),
     z
       .object({
         type: z.literal('includesAll'),

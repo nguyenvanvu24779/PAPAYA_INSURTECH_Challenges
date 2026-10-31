@@ -16,8 +16,8 @@ Cột **Tự kiểm** là kết quả mình đã chạy trên trình duyệt tro
 | A4 | `finance` | Bấm **Move to DOCUMENTS_VERIFIED** | Banner đỏ `ROLE_NOT_ALLOWED`: "Role 'finance' cannot move … requires one of: document_clerk"; hồ sơ không đổi | ✅ | ☐ |
 | A5 | `document_clerk` | Bấm lại **Move to DOCUMENTS_VERIFIED** | Thành công, hồ sơ sang `DOCUMENTS_VERIFIED`, thanh trạng thái đánh dấu ✓ | ✅ | ☐ |
 | A6 | `team_lead` | Panel **Claim data** chỉ có ô `assessorId`; nhập `assessor-01`, Save; rồi **Move to UNDER_ASSESSMENT** | Chỉ `assessorId` sửa được (vai trò khác không thấy ô này); chuyển thành công | ✅ | ☐ |
-| A7 | `assessor` | Ở `UNDER_ASSESSMENT`, xem thẻ **→ APPROVED** | Hiện "✗ Not met: The assessment report must be complete" và "✓ Met: Claim amount must not exceed the coverage limit" | ✅ | ☐ |
-| A8 | `assessor` | Đặt `assessmentReportComplete = true` → **Move to APPROVED** | Thành công; `paymentRequestId` được hệ thống tạo (assessor không tự sửa được trường này) | ☑ qua API | ☐ |
+| A7 | `assessor` | Ở `UNDER_ASSESSMENT`, xem thẻ **→ APPROVED** | Hiện 4 điều kiện chưa đạt: báo cáo thẩm định, số tiền được duyệt, ≤ hạn mức, ≤ số tiền yêu cầu | ✅ (thẻ APPROVED hiện đúng 4 điều kiện) | ☐ |
+| A8 | `assessor` | Đặt `assessmentReportComplete = true` và `approvedAmount = 5000.00` → **Move to APPROVED** | Thành công; `paymentRequestId` được hệ thống tạo (assessor không tự sửa được trường này) | ✅ (CLM-0016 duyệt ở 10,000.00) | ☐ |
 | A9 | `finance` | **Move to PAYMENT_INITIATED**, rồi nhập `paymentConfirmed = true`, `paymentReference` → **Move to CLOSED** | Hồ sơ `CLOSED`; "This is a final state"; không còn transition | ☑ qua API, giao diện xác nhận trạng thái cuối | ☐ |
 
 ## B. Giới hạn chu kỳ
@@ -44,6 +44,16 @@ Cột **Tự kiểm** là kết quả mình đã chạy trên trình duyệt tro
 | D1 | `finance` | Mở hồ sơ ở `UNDER_ASSESSMENT`, xem panel Claim data | "This role cannot edit any field in this state" | ☑ qua test API/engine | ☐ |
 | D2 | Bất kỳ | Thử `PATCH /api/claims/:id/data` với `paymentRequestId` | 403 `DATA_NOT_ALLOWED` ("system-managed") | ☑ qua test API | ☐ |
 
+## G. Các quy tắc nghiệp vụ bổ sung sau lần duyệt đầu
+
+| # | Vai trò | Thao tác | Kết quả mong đợi | Tự kiểm | Bạn |
+|---|---|---|---|---|---|
+| G1 | `document_clerk` | Hồ sơ ở `PENDING_INFO`: đặt `documents` chỉ còn `hospital_invoice`, bật `newInfoReceived`, bấm chuyển về `DOCUMENTS_VERIFIED` | Bị từ chối `PRECONDITION_FAILED`: "All required documents must be present again …"; giữ đủ 3 giấy tờ bắt buộc thì chuyển được | ☑ qua API trên server đang chạy | ☐ |
+| G2 | `assessor` | Hoàn tất báo cáo + số tiền được duyệt, yêu cầu thêm thông tin, clerk ghi nhận, lead bắt đầu thẩm định lại; rồi thử **Move to APPROVED** ngay | Bị từ chối: báo cáo thẩm định và số tiền được duyệt đã bị xóa, phải thẩm định lại | ☑ qua API trên server đang chạy | ☐ |
+| G3 | `document_clerk` | Hồ sơ ở `UNDER_ASSESSMENT`, mở **Claim data** | Không có ô nào sửa được (clerk chỉ sửa lúc `SUBMITTED` và `PENDING_INFO`) | ☑ qua test ma trận (mọi trạng thái × vai trò × trường) | ☐ |
+| G4 | `assessor` | Hồ sơ vượt hạn mức (ví dụ yêu cầu 15000.00, hạn mức 10000.00): ô `claimAmount` không sửa được; đặt `approvedAmount = 10000.00` rồi duyệt | Duyệt thành công; `claimAmount` vẫn 15,000.00, `approvedAmount` 10,000.00. Đặt `approvedAmount = 10000.01` thì bị từ chối | ✅ (ô claimAmount không sửa được; 10,000.01 bị từ chối, 10,000.00 được duyệt) | ☐ |
+| G5 | `assessor` | Từ chối với `appealDeadline` là một ngày đã qua (hoặc trống) | Bị từ chối `PRECONDITION_FAILED`: "… must be set and be after the time of rejection …"; đặt ngày tương lai thì từ chối được; sau đó `system` không đóng được ngay | ☑ qua API trên server đang chạy | ☐ |
+
 ## E. Trình bày và khả năng tiếp cận
 
 | # | Thao tác | Kết quả mong đợi | Tự kiểm | Bạn |
@@ -56,7 +66,7 @@ Cột **Tự kiểm** là kết quả mình đã chạy trên trình duyệt tro
 ## F. Kiểm tra bằng lệnh
 
 ```bash
-npm test             # kỳ vọng: engine 110 pass + 1 skip, API 16 pass, web 17 pass
+npm test             # kỳ vọng: engine 139 pass + 1 skip, API 16 pass, web 17 pass
 npm run typecheck    # kỳ vọng: không lỗi
 npm run scenarios    # kỳ vọng: 6 kịch bản PASS
 ```

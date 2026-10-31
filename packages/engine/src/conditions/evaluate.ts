@@ -36,6 +36,11 @@ export function evaluateCondition(c: Condition, data: ClaimData, now: Date): Con
       const at = typeof v === 'string' ? Date.parse(v) : NaN;
       return result(!Number.isNaN(at) && now.getTime() > at, `${c.field} must be in the past`);
     }
+    case 'isFuture': {
+      const v = get(c.field);
+      const at = typeof v === 'string' ? Date.parse(v) : NaN;
+      return result(!Number.isNaN(at) && at > now.getTime(), `${c.field} must be in the future`);
+    }
     case 'includesAll': {
       const v = get(c.field);
       const ok = Array.isArray(v) && c.values.every((x) => v.includes(x));

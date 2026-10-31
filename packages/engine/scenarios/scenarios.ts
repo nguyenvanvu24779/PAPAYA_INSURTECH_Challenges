@@ -44,11 +44,11 @@ function transition(
 
 /** Reusable steps. Each is the successful form of one row of the brief's table. */
 export const steps = {
-  create: (): Step => ({
+  create: (data: object = { claimAmount: 500_000, coverageLimit: 1_000_000 }): Step => ({
     kind: 'create',
     label: 'Clerk submits claim (amount 5,000.00, limit 10,000.00)',
     actor: USERS.clerk,
-    data: { claimAmount: 500_000, coverageLimit: 1_000_000 },
+    data,
     expect: 'APPLIED',
   }),
   verify: (): Step =>
@@ -60,8 +60,9 @@ export const steps = {
       assessorId: 'assessor-01',
     }),
   approve: (): Step =>
-    transition('Assessor approves', 'APPROVED', USERS.assessor, 'Report complete, within coverage limit', {
+    transition('Assessor approves', 'APPROVED', USERS.assessor, 'Report complete, amount within coverage limit', {
       assessmentReportComplete: true,
+      approvedAmount: 500_000,
     }),
   reject: (): Step =>
     transition('Assessor rejects', 'REJECTED', USERS.assessor, 'Policy exclusion applies', {
@@ -94,13 +95,13 @@ export const steps = {
 };
 
 /** Steps that bring a fresh claim to the given state (all must be APPLIED). */
-export function pathTo(state: string): Step[] {
-  const toUnderAssessment = [steps.create(), steps.verify(), steps.startAssessment()];
+export function pathTo(state: string, createData?: object): Step[] {
+  const toUnderAssessment = [steps.create(createData), steps.verify(), steps.startAssessment()];
   switch (state) {
     case 'SUBMITTED':
-      return [steps.create()];
+      return [steps.create(createData)];
     case 'DOCUMENTS_VERIFIED':
-      return [steps.create(), steps.verify()];
+      return [steps.create(createData), steps.verify()];
     case 'UNDER_ASSESSMENT':
       return toUnderAssessment;
     case 'APPROVED':
@@ -293,12 +294,12 @@ export function runScenario({ engine, clock }: Harness, scenario: Scenario): Sce
 }
 
 /** Drive a fresh claim to `state`, asserting every step is applied. */
-export function driveTo(harness: Harness, state: string): string {
+export function driveTo(harness: Harness, state: string, createData?: object): string {
   const report = runScenario(harness, {
     id: 'path',
     name: `path to ${state}`,
     description: '',
-    steps: pathTo(state),
+    steps: pathTo(state, createData),
     finalState: state,
   });
   if (!report.passed) throw new Error(`Could not reach ${state}: ${JSON.stringify(report.steps)}`);

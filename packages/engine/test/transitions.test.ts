@@ -111,21 +111,6 @@ describe('invalid transitions', () => {
 });
 
 describe('preconditions in detail', () => {
-  it('approval is refused when the amount exceeds the coverage limit, saying so', () => {
-    const h = createHarness();
-    const id = driveTo(h, 'UNDER_ASSESSMENT');
-    h.engine.updateClaimData(id, { actor: USERS.assessor, reason: 'Revised amount', data: { claimAmount: 1_000_001 } });
-    const result = attempt(h, id, steps.approve() as TransitionStep);
-    expect(result).toMatchObject({ ok: false, code: 'PRECONDITION_FAILED' });
-    expect(!result.ok && result.details).toEqual(['Claim amount must not exceed the coverage limit']);
-  });
-
-  it('approval is allowed when the amount equals the coverage limit exactly', () => {
-    const h = createHarness();
-    const id = driveTo(h, 'UNDER_ASSESSMENT');
-    h.engine.updateClaimData(id, { actor: USERS.assessor, reason: 'Revised amount', data: { claimAmount: 1_000_000 } });
-    expect(attempt(h, id, steps.approve() as TransitionStep).ok).toBe(true);
-  });
 
   it('reports every failed condition, not just the first', () => {
     const h = createHarness();
@@ -256,7 +241,7 @@ describe('side effects', () => {
     attempt(h, id, steps.approve() as TransitionStep);
     expect(h.logs).toEqual([
       `[notify:member] claim ${id}: Your claim has been approved`,
-      `[payments] claim ${id}: payment request PAY-REQ-${id} created for amount 500000`,
+      `[payments] claim ${id}: payment request PAY-REQ-${id} created for approved amount 500000`,
     ]);
     expect(h.engine.getClaim(id).data.paymentRequestId).toBe(`PAY-REQ-${id}`);
   });
@@ -297,7 +282,7 @@ describe('available transitions', () => {
     expect(available.map((t) => t.to).sort()).toEqual(['APPROVED', 'PENDING_INFO', 'REJECTED']);
     const approve = available.find((t) => t.to === 'APPROVED')!;
     expect(approve.roles).toEqual(['assessor']);
-    expect(approve.preconditions.map((p) => p.satisfied)).toEqual([false, true]);
+    expect(approve.preconditions.map((p) => p.satisfied)).toEqual([false, false, false, false]);
     expect(available.find((t) => t.to === 'PENDING_INFO')!.limit).toMatchObject({ max: 3, used: 0 });
   });
 

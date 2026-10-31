@@ -1,5 +1,5 @@
 diff --git a/config/claim-workflow.yaml b/docs/examples/claim-workflow.with-escalation.yaml
-index f4548f3..2d71074 100644
+index b448ada..1471174 100644
 --- a/config/claim-workflow.yaml
 +++ b/docs/examples/claim-workflow.with-escalation.yaml
 @@ -34,6 +34,8 @@ states:
@@ -11,7 +11,7 @@ index f4548f3..2d71074 100644
  
  # Who may submit a claim.
  intake:
-@@ -224,3 +226,22 @@ transitions:
+@@ -255,3 +257,22 @@ transitions:
              field: memberAcknowledged
      effects:
        - type: archiveClaim

@@ -109,6 +109,7 @@ function checkCondition(c: Condition, where: string, problems: string[]): void {
       expectKind(c.field, ['boolean'], at, problems);
       break;
     case 'isPast':
+    case 'isFuture':
       expectKind(c.field, ['datetime'], at, problems);
       break;
     case 'includesAll':

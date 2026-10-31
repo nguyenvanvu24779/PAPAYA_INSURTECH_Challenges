@@ -24,7 +24,8 @@ Audit trail (immutable, hash-chained)
       data assessmentStartedAt: null -> "2026-11-01T09:00:00.000Z"
       data assessorId: null -> "assessor-01"
   #4 2026-11-01T09:00:00.000Z APPLIED TRANSITION  UNDER_ASSESSMENT -> APPROVED
-      by assessor-01 (assessor) — "Report complete, within coverage limit"
+      by assessor-01 (assessor) — "Report complete, amount within coverage limit"
+      data approvedAmount: null -> 500000
       data assessmentReportComplete: null -> true
       data paymentRequestId: null -> "PAY-REQ-CLM-0001"
   #5 2026-11-01T09:00:00.000Z APPLIED TRANSITION  APPROVED -> PAYMENT_INITIATED
@@ -38,7 +39,7 @@ Side effects (mock, console)
   [notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment
   [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
   [notify:member] claim CLM-0001: Your claim has been approved
-  [payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for amount 500000
+  [payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for approved amount 500000
   [payments] claim CLM-0001: payment system triggered for request PAY-REQ-CLM-0001
   [notify:member] claim CLM-0001: Your claim is closed. Payment reference: BANK-TXN-778899
 
@@ -126,7 +127,8 @@ Audit trail (immutable, hash-chained)
       by lead-01 (team_lead) — "Assigned to assessor-01"
       data assessmentStartedAt: null -> "2026-11-01T09:00:00.000Z"
   #7 2026-11-01T09:00:00.000Z APPLIED TRANSITION  UNDER_ASSESSMENT -> APPROVED
-      by assessor-01 (assessor) — "Report complete, within coverage limit"
+      by assessor-01 (assessor) — "Report complete, amount within coverage limit"
+      data approvedAmount: null -> 500000
       data assessmentReportComplete: null -> true
       data paymentRequestId: null -> "PAY-REQ-CLM-0001"
   #8 2026-11-01T09:00:00.000Z APPLIED TRANSITION  APPROVED -> PAYMENT_INITIATED
@@ -140,10 +142,10 @@ Side effects (mock, console)
   [notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment
   [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
   [notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #1
-  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription
+  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription, assessmentReportComplete, approvedAmount, rejectionReason, appealDeadline
   [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
   [notify:member] claim CLM-0001: Your claim has been approved
-  [payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for amount 500000
+  [payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for approved amount 500000
   [payments] claim CLM-0001: payment system triggered for request PAY-REQ-CLM-0001
   [notify:member] claim CLM-0001: Your claim is closed. Payment reference: BANK-TXN-778899
 
@@ -271,13 +273,13 @@ Side effects (mock, console)
   [notify:assessment_team] claim CLM-0001: Claim documents verified, ready for assessment
   [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
   [notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #1
-  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription
+  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription, assessmentReportComplete, approvedAmount, rejectionReason, appealDeadline
   [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
   [notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #2
-  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription
+  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription, assessmentReportComplete, approvedAmount, rejectionReason, appealDeadline
   [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
   [notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #3
-  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription
+  [data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription, assessmentReportComplete, approvedAmount, rejectionReason, appealDeadline
   [clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z
 
 ====================================================================================================

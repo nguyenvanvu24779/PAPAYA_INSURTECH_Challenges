@@ -63,11 +63,12 @@ describe('audit entries', () => {
   it('record manual data changes with before and after values', () => {
     const h = createHarness();
     const id = driveTo(h, 'UNDER_ASSESSMENT');
-    h.engine.updateClaimData(id, { actor: USERS.assessor, reason: 'Corrected amount', data: { claimAmount: 450_000 } });
+    h.engine.updateClaimData(id, { actor: USERS.assessor, reason: 'Assessed amount', data: { approvedAmount: 450_000 } });
+    h.engine.updateClaimData(id, { actor: USERS.assessor, reason: 'Corrected amount', data: { approvedAmount: 400_000 } });
     expect(h.engine.getAudit(id).at(-1)).toMatchObject({
       kind: 'DATA_UPDATE',
       outcome: 'APPLIED',
-      dataChanges: [{ field: 'claimAmount', before: 500_000, after: 450_000 }],
+      dataChanges: [{ field: 'approvedAmount', before: 450_000, after: 400_000 }],
     });
   });
 

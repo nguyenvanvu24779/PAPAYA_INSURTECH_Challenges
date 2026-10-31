@@ -11,7 +11,10 @@ export const CLAIM_FIELD_KINDS = {
   documents: 'stringArray',
   assessorId: 'string',
   assessmentReportComplete: 'boolean',
+  /** What the member asked for. Set at intake and never changed afterwards. */
   claimAmount: 'integer',
+  /** What the assessor approves; may be lower than claimAmount (e.g. capped at the limit). */
+  approvedAmount: 'integer',
   coverageLimit: 'integer',
   rejectionReason: 'string',
   missingInfoDescription: 'string',

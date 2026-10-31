@@ -122,11 +122,16 @@
           "userId": "assessor-01",
           "role": "assessor"
         },
-        "reason": "Report complete, within coverage limit",
+        "reason": "Report complete, amount within coverage limit",
         "outcome": "APPLIED",
         "errorCode": null,
         "errorMessage": null,
         "dataChanges": [
+          {
+            "field": "approvedAmount",
+            "before": null,
+            "after": 500000
+          },
           {
             "field": "assessmentReportComplete",
             "before": null,
@@ -147,11 +152,11 @@
           {
             "type": "createPaymentRequest",
             "status": "OK",
-            "detail": "[payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for amount 500000"
+            "detail": "[payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for approved amount 500000"
           }
         ],
         "prevHash": "cc7a0becf7c024d7ee7953c478b602328a662d55c54bdf1f157224d3302bbea6",
-        "hash": "1a4d4c3b97eacd9f6d6fdf6fbbb5d0c9a8e56d6ce77bef70bbb802fb2f854503"
+        "hash": "33859ffb6f056fc3b7a18c6204b310799c9c3aa8b8a8d91e57934138f1fc8c2a"
       },
       {
         "id": "AUD-000005",
@@ -177,8 +182,8 @@
             "detail": "[payments] claim CLM-0001: payment system triggered for request PAY-REQ-CLM-0001"
           }
         ],
-        "prevHash": "1a4d4c3b97eacd9f6d6fdf6fbbb5d0c9a8e56d6ce77bef70bbb802fb2f854503",
-        "hash": "7baf62c53df0efe65d40a429f2bc432475a219d50d2e7bca98e06631ca70fc6f"
+        "prevHash": "33859ffb6f056fc3b7a18c6204b310799c9c3aa8b8a8d91e57934138f1fc8c2a",
+        "hash": "052a319ac7c2355b5d028733e8e4e2bdd335034f99e3ae8f3e0a017dbd153bc7"
       },
       {
         "id": "AUD-000006",
@@ -215,8 +220,8 @@
             "detail": "[notify:member] claim CLM-0001: Your claim is closed. Payment reference: BANK-TXN-778899"
           }
         ],
-        "prevHash": "7baf62c53df0efe65d40a429f2bc432475a219d50d2e7bca98e06631ca70fc6f",
-        "hash": "d5225e7c6763ef802f9cd204107071b0aa27a3b7c46eb5b0c7fba0663ad25686"
+        "prevHash": "052a319ac7c2355b5d028733e8e4e2bdd335034f99e3ae8f3e0a017dbd153bc7",
+        "hash": "206966b86e1f763b221cea260c157555474d881c5aa449fc32757feadc2a6b3f"
       }
     ]
   },
@@ -614,11 +619,11 @@
           {
             "type": "clearFields",
             "status": "OK",
-            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription"
+            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription, assessmentReportComplete, approvedAmount, rejectionReason, appealDeadline"
           }
         ],
         "prevHash": "e8238b962e60252c856fb5dc0cda9aa6e813257f31391073acfde86645679a32",
-        "hash": "326ecb650a33d09e6d6025f000680c3f3afc359b7d1e4d18f7d0e39dff31e961"
+        "hash": "24f9849a0e76d967cbad2eea5ee2285cc0c5d99ce2e7c00725b21723fb4282cc"
       },
       {
         "id": "AUD-000006",
@@ -650,8 +655,8 @@
             "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
           }
         ],
-        "prevHash": "326ecb650a33d09e6d6025f000680c3f3afc359b7d1e4d18f7d0e39dff31e961",
-        "hash": "2af97f44e8b792b2b9e8ee6bc839d12df32464f192e4d260d0ac96d5a38e3750"
+        "prevHash": "24f9849a0e76d967cbad2eea5ee2285cc0c5d99ce2e7c00725b21723fb4282cc",
+        "hash": "70a2fcdd38eb70b12081155bec918203ce57aad5e9a4c79ac4e9af34486c9d81"
       },
       {
         "id": "AUD-000007",
@@ -665,11 +670,16 @@
           "userId": "assessor-01",
           "role": "assessor"
         },
-        "reason": "Report complete, within coverage limit",
+        "reason": "Report complete, amount within coverage limit",
         "outcome": "APPLIED",
         "errorCode": null,
         "errorMessage": null,
         "dataChanges": [
+          {
+            "field": "approvedAmount",
+            "before": null,
+            "after": 500000
+          },
           {
             "field": "assessmentReportComplete",
             "before": null,
@@ -690,11 +700,11 @@
           {
             "type": "createPaymentRequest",
             "status": "OK",
-            "detail": "[payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for amount 500000"
+            "detail": "[payments] claim CLM-0001: payment request PAY-REQ-CLM-0001 created for approved amount 500000"
           }
         ],
-        "prevHash": "2af97f44e8b792b2b9e8ee6bc839d12df32464f192e4d260d0ac96d5a38e3750",
-        "hash": "2be01131c7d2519d0d9c5385f190ee3e6607df041b86950b65e1d715ba8faf98"
+        "prevHash": "70a2fcdd38eb70b12081155bec918203ce57aad5e9a4c79ac4e9af34486c9d81",
+        "hash": "39b7f576df129245fae88b1e437d9c2d03cef912add49cba8084af76c21761e4"
       },
       {
         "id": "AUD-000008",
@@ -720,8 +730,8 @@
             "detail": "[payments] claim CLM-0001: payment system triggered for request PAY-REQ-CLM-0001"
           }
         ],
-        "prevHash": "2be01131c7d2519d0d9c5385f190ee3e6607df041b86950b65e1d715ba8faf98",
-        "hash": "f86b1a3cb9b469b06e73554d2c28d520042e10c3e5eacb5594402229ed128f5e"
+        "prevHash": "39b7f576df129245fae88b1e437d9c2d03cef912add49cba8084af76c21761e4",
+        "hash": "8718c6dc74eb528e20ba09ac3fb63ce0f746bdc5d3809205f5ea417bedcc37ff"
       },
       {
         "id": "AUD-000009",
@@ -758,8 +768,8 @@
             "detail": "[notify:member] claim CLM-0001: Your claim is closed. Payment reference: BANK-TXN-778899"
           }
         ],
-        "prevHash": "f86b1a3cb9b469b06e73554d2c28d520042e10c3e5eacb5594402229ed128f5e",
-        "hash": "fa579c87476eb5e3ad53ea67ae871fc9f9f698933bf12639a85d4f300e1f0fb0"
+        "prevHash": "8718c6dc74eb528e20ba09ac3fb63ce0f746bdc5d3809205f5ea417bedcc37ff",
+        "hash": "8522d227906a5528e6f9f074444d538bff7e4efcbbd613bc832144b2aebe5763"
       }
     ]
   },
@@ -1129,11 +1139,11 @@
           {
             "type": "clearFields",
             "status": "OK",
-            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription"
+            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription, assessmentReportComplete, approvedAmount, rejectionReason, appealDeadline"
           }
         ],
         "prevHash": "e8238b962e60252c856fb5dc0cda9aa6e813257f31391073acfde86645679a32",
-        "hash": "326ecb650a33d09e6d6025f000680c3f3afc359b7d1e4d18f7d0e39dff31e961"
+        "hash": "24f9849a0e76d967cbad2eea5ee2285cc0c5d99ce2e7c00725b21723fb4282cc"
       },
       {
         "id": "AUD-000006",
@@ -1165,8 +1175,8 @@
             "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
           }
         ],
-        "prevHash": "326ecb650a33d09e6d6025f000680c3f3afc359b7d1e4d18f7d0e39dff31e961",
-        "hash": "2af97f44e8b792b2b9e8ee6bc839d12df32464f192e4d260d0ac96d5a38e3750"
+        "prevHash": "24f9849a0e76d967cbad2eea5ee2285cc0c5d99ce2e7c00725b21723fb4282cc",
+        "hash": "70a2fcdd38eb70b12081155bec918203ce57aad5e9a4c79ac4e9af34486c9d81"
       },
       {
         "id": "AUD-000007",
@@ -1198,8 +1208,8 @@
             "detail": "[notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #2"
           }
         ],
-        "prevHash": "2af97f44e8b792b2b9e8ee6bc839d12df32464f192e4d260d0ac96d5a38e3750",
-        "hash": "8bda4958b88735e70c3d2bdf3d005a502f20e2e2ce3d1bb3f06f330d065b6eb6"
+        "prevHash": "70a2fcdd38eb70b12081155bec918203ce57aad5e9a4c79ac4e9af34486c9d81",
+        "hash": "6468ea1fce7a072084d3adafb0898197c0c594eda3d8e20076c1509199b44d0f"
       },
       {
         "id": "AUD-000008",
@@ -1233,11 +1243,11 @@
           {
             "type": "clearFields",
             "status": "OK",
-            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription"
+            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription, assessmentReportComplete, approvedAmount, rejectionReason, appealDeadline"
           }
         ],
-        "prevHash": "8bda4958b88735e70c3d2bdf3d005a502f20e2e2ce3d1bb3f06f330d065b6eb6",
-        "hash": "8b044245e938d837a0e6b4d1c95cb9d7c3dd71cdec65a192e87507fa9ce1580b"
+        "prevHash": "6468ea1fce7a072084d3adafb0898197c0c594eda3d8e20076c1509199b44d0f",
+        "hash": "28ccc09ca811242b1a9676efb0d57894f5f231e7cd4c37b65ea952b510e1ff6a"
       },
       {
         "id": "AUD-000009",
@@ -1269,8 +1279,8 @@
             "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
           }
         ],
-        "prevHash": "8b044245e938d837a0e6b4d1c95cb9d7c3dd71cdec65a192e87507fa9ce1580b",
-        "hash": "4cfdaeb029cd36132539a9245e07ddbdf1dc03a536264bcfdef9b75d0ba8efd9"
+        "prevHash": "28ccc09ca811242b1a9676efb0d57894f5f231e7cd4c37b65ea952b510e1ff6a",
+        "hash": "8170b2140c3746a3a4a2d60e94a4e78039d1d133c2695f5ef87464b01530d39b"
       },
       {
         "id": "AUD-000010",
@@ -1302,8 +1312,8 @@
             "detail": "[notify:member] claim CLM-0001: Additional information requested: Hospital invoice, request #3"
           }
         ],
-        "prevHash": "4cfdaeb029cd36132539a9245e07ddbdf1dc03a536264bcfdef9b75d0ba8efd9",
-        "hash": "c088a489a9c7d2bc44fb77e9a05687e5d159eaa46b85a32b74b44eb4268f21bc"
+        "prevHash": "8170b2140c3746a3a4a2d60e94a4e78039d1d133c2695f5ef87464b01530d39b",
+        "hash": "400b0d217512f54d3e382fef676876bdac496afedbd0017ed981d82cf9a6c159"
       },
       {
         "id": "AUD-000011",
@@ -1337,11 +1347,11 @@
           {
             "type": "clearFields",
             "status": "OK",
-            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription"
+            "detail": "[data] claim CLM-0001: cleared assessmentStartedAt, newInfoReceived, missingInfoDescription, assessmentReportComplete, approvedAmount, rejectionReason, appealDeadline"
           }
         ],
-        "prevHash": "c088a489a9c7d2bc44fb77e9a05687e5d159eaa46b85a32b74b44eb4268f21bc",
-        "hash": "243e1e9b657befd1edbcda0237d9c433dac9c838f5a9b6197895b8843aab4372"
+        "prevHash": "400b0d217512f54d3e382fef676876bdac496afedbd0017ed981d82cf9a6c159",
+        "hash": "9b9d7af347900e8cd030198a1d54b7989515fbc4af3cbbc0416a817531b82c43"
       },
       {
         "id": "AUD-000012",
@@ -1373,8 +1383,8 @@
             "detail": "[clock] claim CLM-0001: assessmentStartedAt = 2026-11-01T09:00:00.000Z"
           }
         ],
-        "prevHash": "243e1e9b657befd1edbcda0237d9c433dac9c838f5a9b6197895b8843aab4372",
-        "hash": "8b11823e982f37cddce375b9ff87efdf156c951c945d689b90f5e5ca2023c8be"
+        "prevHash": "9b9d7af347900e8cd030198a1d54b7989515fbc4af3cbbc0416a817531b82c43",
+        "hash": "2b960f10d10278a4e981c8ab2783f6abc8451f80ae650611c81ebd34b375408a"
       },
       {
         "id": "AUD-000013",
@@ -1394,8 +1404,8 @@
         "errorMessage": "Maximum information requests exceeded — escalate to team lead",
         "dataChanges": [],
         "effects": [],
-        "prevHash": "8b11823e982f37cddce375b9ff87efdf156c951c945d689b90f5e5ca2023c8be",
-        "hash": "9223d719ebe8b0078a128eaa841557c902a7c9bea73e3bc626a13c4527a01cdd"
+        "prevHash": "2b960f10d10278a4e981c8ab2783f6abc8451f80ae650611c81ebd34b375408a",
+        "hash": "630580d5e09da457881c0cbbd4dfa15628db6d1ff0aafc7bec5683ace28553a3"
       }
     ]
   }

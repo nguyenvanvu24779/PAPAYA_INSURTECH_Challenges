@@ -57,7 +57,7 @@ export function planEffect(effect: Effect, ctx: EffectContext): EffectOutcome {
     case 'createPaymentRequest': {
       const id = `PAY-REQ-${ctx.claimId}`;
       return {
-        detail: `[payments] ${tag}: payment request ${id} created for amount ${ctx.data.claimAmount ?? 'n/a'}`,
+        detail: `[payments] ${tag}: payment request ${id} created for approved amount ${ctx.data.approvedAmount ?? 'n/a'}`,
         set: { paymentRequestId: id },
       };
     }
