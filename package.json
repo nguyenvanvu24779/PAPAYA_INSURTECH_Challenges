@@ -8,12 +8,14 @@
     "apps/*"
   ],
   "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"npm run dev -w @claims/api\" \"npm run dev -w @claims/web\"",
     "scenarios": "tsx scripts/run-scenarios.ts",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "concurrently": "^10.0.6",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "vitest": "^5.0.5"

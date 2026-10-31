@@ -1,0 +1,36 @@
+diff --git a/config/claim-workflow.yaml b/docs/examples/claim-workflow.with-escalation.yaml
+index f4548f3..2d71074 100644
+--- a/config/claim-workflow.yaml
++++ b/docs/examples/claim-workflow.with-escalation.yaml
+@@ -34,6 +34,8 @@ states:
+   CLOSED:
+     description: Claim lifecycle complete
+     terminal: true
++  ESCALATED:
++    description: Team lead has taken over a claim that needs a decision beyond the assessor
+ 
+ # Who may submit a claim.
+ intake:
+@@ -224,3 +226,22 @@ transitions:
+             field: memberAcknowledged
+     effects:
+       - type: archiveClaim
++
++  - id: escalate
++    from: UNDER_ASSESSMENT
++    to: ESCALATED
++    description: Team lead takes over, e.g. after the information-request limit is reached
++    roles: [team_lead]
++    effects:
++      - type: notify
++        target: assessment_team
++        message: Claim escalated to team lead
++
++  - id: resume_after_escalation
++    from: ESCALATED
++    to: UNDER_ASSESSMENT
++    description: Team lead hands the claim back to assessment
++    roles: [team_lead]
++    effects:
++      - type: stampTime
++        field: assessmentStartedAt

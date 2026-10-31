@@ -5,7 +5,8 @@ import { createApp } from './app';
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 const configPath = process.env.WORKFLOW_CONFIG ?? `${root}config/claim-workflow.yaml`;
 const dataDir = process.env.DATA_DIR ?? `${root}data`;
-const port = Number(process.env.PORT ?? 3001);
+// Dedicated variable: a generic PORT is often set for the web dev server and would collide.
+const port = Number(process.env.API_PORT ?? 3001);
 
 const engine = new WorkflowEngine(loadWorkflowFile(configPath), {
   claims: new JsonFileClaimRepository(`${dataDir}/claims.json`),
