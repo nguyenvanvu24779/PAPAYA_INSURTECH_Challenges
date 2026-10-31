@@ -35,7 +35,7 @@ Cột **Tự kiểm** là kết quả mình đã chạy trên trình duyệt tro
 | C2 | Xem dòng bị từ chối | Hiện mã lỗi và thông báo cụ thể | ✅ | ☐ |
 | C3 | Xem dòng cập nhật dữ liệu / chuyển trạng thái | Hiện các thay đổi dữ liệu `trường: trước → sau` và kết quả tác dụng phụ | ✅ | ☐ |
 | C4 | Tải lại trang (F5) | Hồ sơ và audit còn nguyên | ✅ | ☐ |
-| C5 | Mở `data/audit.jsonl`, sửa tay một ký tự, khởi động lại API | API **từ chối khởi động**: "failed integrity check at entry N" | ☑ qua test tự động | ☐ |
+| C5 | Mở `data/audit.jsonl`, sửa tay một ký tự, khởi động lại API | API **từ chối khởi động**: "failed integrity check at entry N" | ☑ qua test tự động | ✅ |
 
 ## D. Kiểm tra quyền sửa dữ liệu
 
@@ -60,7 +60,7 @@ Cột **Tự kiểm** là kết quả mình đã chạy trên trình duyệt tro
 |---|---|---|---|---|
 | E1 | Thu nhỏ cửa sổ về cỡ điện thoại (375px) | Không có thanh cuộn ngang của trang; bảng audit tự cuộn ngang trong khung riêng | ✅ | ☐ |
 | E2 | Đổi vai trò nhiều lần | Mỗi panel chỉ xuất hiện đúng một bản (lỗi nhân bản đã sửa) | ✅ | ☐ |
-| E3 | Bấm nút ở phần thấp của trang | Banner kết quả vẫn thấy được (dính ở đầu vùng nhìn) | ✅ | ☐ |
+| E3 | Bấm nút ở phần thấp của trang | Banner kết quả vẫn thấy được (dính ở đầu vùng nhìn) | ✅ | ✅ |
 | E4 | Thử chế độ sáng và tối của hệ điều hành | Cả hai đều đọc được | ☑ chỉ kiểm chế độ tối | ☐ |
 
 ## F. Kiểm tra bằng lệnh
