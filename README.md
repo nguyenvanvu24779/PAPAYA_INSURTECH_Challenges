@@ -2,6 +2,10 @@
 
 Công cụ điều phối vòng đời claim bảo hiểm bằng **máy trạng thái định nghĩa trong file cấu hình**: kiểm tra chuyển trạng thái, điều kiện tiên quyết, tác dụng phụ (mock), phân quyền theo vai trò, nhật ký kiểm toán bất biến và giới hạn chu kỳ yêu cầu thông tin. Đề bài: [CHALLENGE.md](CHALLENGE.md).
 
+**Bài nộp gồm hai phần trong cùng repo:**
+- Phần 1, câu hỏi logic: [logical-questions/answers.md](logical-questions/answers.md)
+- Phần 2, AI Engineering Challenge 14: báo cáo ở [REPORT.md](REPORT.md), nhật ký làm việc với AI ở [docs/ai-conversation-log/](docs/ai-conversation-log/)
+
 - **Engine** (`packages/engine`): TypeScript thuần, không biết HTTP hay file.
 - **API** (`apps/api`): Express 5 + zod.
 - **Web** (`apps/web`): Vite + React + Tailwind CSS.
