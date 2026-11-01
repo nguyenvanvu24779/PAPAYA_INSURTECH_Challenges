@@ -56,7 +56,7 @@ Danh sách đầy đủ 20 quyết định, kèm lý do và đánh đổi, ở [
 
 **Bốn lỗi chỉ thấy khi dùng giao diện thật** (test tự động không bắt được): hai panel dùng chung một `key` làm React nhân bản panel mỗi lần đổi vai trò; biến `PORT` chung làm API và web tranh cổng; thông báo kết quả nằm ở đầu trang nên bị khuất khi bấm nút ở phần thấp; ô lý do giữ nội dung cũ khi đổi vai trò. Cả bốn đã sửa.
 
-**Năm lỗ hổng nghiệp vụ do chủ dự án phát hiện khi vận hành thử**, đã sửa kèm 31 test mới:
+**Năm lỗ hổng nghiệp vụ** phát hiện khi vận hành thử và kiểm tra độc lập: một AI khác (không phải AI làm bài) thử trực tiếp API và giao diện, chủ dự án xem lại, xác nhận từng điểm là sai về nghiệp vụ rồi chuyển yêu cầu sửa cho AI làm bài. Đã sửa kèm 31 test mới:
 
 1. Quay lại bước xác minh không kiểm đủ giấy tờ → nay kiểm đủ như lần đầu, dùng chung một danh sách trong cấu hình.
 2. Thẩm định một lần rồi duyệt luôn sau khi nhận thêm thông tin → nay mỗi lần quay lại xóa kết quả thẩm định cũ, phải thẩm định lại.
@@ -81,7 +81,9 @@ Danh sách đầy đủ 20 quyết định, kèm lý do và đánh đổi, ở [
 
 ## 7. Sử dụng AI
 
-Toàn bộ bài làm được thực hiện cùng Claude Code trong một phiên làm việc: phân tích đề, thiết kế, viết code, test và tài liệu. Con người quyết định các điểm chính: stack, bỏ xác thực, duyệt các quyết định D1 và D2, xác nhận D18 và D19, và phát hiện 5 lỗ hổng nghiệp vụ ở mục 5.
+Toàn bộ bài làm được thực hiện cùng Claude Code trong một phiên làm việc: phân tích đề, thiết kế, viết code, test và tài liệu. Con người quyết định các điểm chính: stack, bỏ xác thực, duyệt các quyết định D1 và D2, xác nhận D18 và D19, và xác nhận 5 lỗ hổng nghiệp vụ ở mục 5 là sai (việc phát hiện có sự hỗ trợ của một AI rà soát độc lập).
+
+Thời gian: bắt đầu tối 31/10/2026 (khoảng 12:30 UTC), hoàn tất bản nộp cùng đêm (khoảng 15:20 UTC), tổng cộng chừng 3 giờ làm việc với AI; phần việc sau đó chỉ là rà soát và chỉnh báo cáo.
 
 Nhật ký hội thoại gốc, không chỉnh sửa, xuất bằng công cụ của ứng dụng: [docs/ai-conversation-log/](docs/ai-conversation-log/). Để đọc dễ hơn có bản Markdown sinh tự động từ chính file gốc: [CONVERSATION.md](docs/ai-conversation-log/CONVERSATION.md) (gọn) và [CONVERSATION-FULL.md](docs/ai-conversation-log/CONVERSATION-FULL.md) (đầy đủ). Giới hạn của bản xuất ghi ở [EXPORT-NOTES.md](docs/ai-conversation-log/EXPORT-NOTES.md).
 
